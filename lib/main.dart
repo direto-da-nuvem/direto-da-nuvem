@@ -3,12 +3,6 @@ import 'package:get/get.dart';
 import 'package:sample/routes/app_pages.dart';
 
 Future<void> main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
-
-
   runApp(const MyApp());
 }
 
@@ -21,11 +15,8 @@ class MyApp extends StatelessWidget {
       title: 'Sample',
       debugShowCheckedModeBanner: true,
       theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme
-              .fromSwatch(primarySwatch: Colors.blue)
-              .copyWith(background: Colors.black)
-      ),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(201,209,242,255)),
+    ),
       getPages: Pages.pages,
       initialRoute: Routes.HOME,
     );
