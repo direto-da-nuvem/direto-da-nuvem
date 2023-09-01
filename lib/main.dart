@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(201,209,242,255)),
     ),
       getPages: Pages.pages,
-      initialRoute: Routes.HOME,
+      initialRoute: Routes.DASHBOARD,
     );
   }
 }
