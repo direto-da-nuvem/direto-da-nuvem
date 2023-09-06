@@ -12,7 +12,7 @@ class LoginPage extends StatelessWidget {
         builder: (loginController) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Dashboard'),
+              title: const Text('Login'),
               centerTitle: true,
             ),
             body: Center(
