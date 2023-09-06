@@ -10,11 +10,13 @@ class LoginController extends GetxController {
   UserCredential? userCredential;
 
   @override
-  void onInit() {
-    // if(auth.currentUser != null) {
-    //   Get.offAndToNamed(Routes.DASHBOARD);
-    // }
-    super.onInit();
+  void onReady() {
+    if (auth.currentUser != null) {
+      debugPrint("${auth.currentUser!.displayName}");
+      Get.offAndToNamed(Routes.DASHBOARD);
+    }
+
+    super.onReady();
   }
 
   Future<void> signInWithGoogle() async {
@@ -47,6 +49,7 @@ class LoginController extends GetxController {
       debugPrint('googleUser: $googleUser');
       debugPrint('googleAuth: $googleAuth');
       userCredential = await auth.signInWithCredential(credential);
+      update();
       Get.offAndToNamed(Routes.DASHBOARD);
     }
     debugPrint('userCredential: $userCredential');

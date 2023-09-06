@@ -5,8 +5,6 @@ import 'package:get/get.dart';
 import 'package:sample/controllers/dashboard_controller.dart';
 import 'package:sample/controllers/login_controller.dart';
 
-// Itens do popMenuButton
-enum MenuItem { itemOne }
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -119,13 +117,15 @@ class _DashboardPageState extends State<DashboardPage> {
                     },
                   ),
                   GetBuilder<LoginController>(
-                    init: LoginController(),
+                    init: Get.put(LoginController()),
                     builder: (loginController) {
                     return ListTile(
                       title: Row(
                         children: [
-                          // TODO: evitar que quebre quando o nome for muito grande
-                          Text(loginController.auth!.currentUser!.displayName!.toString()),
+                          SizedBox(
+                              width: 110,
+                              child: Text(loginController.auth.currentUser!.displayName!.toString()),
+                          ),
                           const Icon(Icons.exit_to_app),
                         ],
                       ),
