@@ -19,7 +19,7 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DashboardController>(
-        init: DashboardController(),
+        init: Get.put(DashboardController()),
         builder: (homeController) {
           return Scaffold(
             appBar: AppBar(
@@ -27,7 +27,7 @@ class _DashboardPageState extends State<DashboardPage> {
               centerTitle: true,
             ),
             drawer: Drawer(
-              width: 170,
+              width: 200,
               backgroundColor: const Color.fromARGB(201, 209, 242, 255),
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -36,7 +36,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     decoration: BoxDecoration(
                       color: Color.fromARGB(243, 245, 252, 255),
                     ),
-                    child: Text('Drawer Header'),
+                    child: Image(image: AssetImage("assets/logo.png")),
                   ),
                   ListTile(
                     title: const Row(
