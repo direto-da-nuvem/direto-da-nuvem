@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sample/controllers/dashboard_controller.dart';
@@ -123,7 +121,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       title: Row(
                         children: [
                           SizedBox(
-                              width: 110,
+                              width: 130,
                               child: Text(loginController.auth.currentUser!.displayName!.toString()),
                           ),
                           const Icon(Icons.exit_to_app),
