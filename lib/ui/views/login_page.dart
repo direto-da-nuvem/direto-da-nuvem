@@ -21,21 +21,20 @@ class LoginPage extends StatelessWidget {
               onPressed: loginController.signInWithGoogle,
               child: const SizedBox(
                 height: 50,
-                width: 180,
-                child: Center(
-                  child: Row(
-                    children: [
-                      Icon(FontAwesomeIcons.google),
-                      SizedBox(width: 15,),
-                      Text("Sign in with Google",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500
-                        )
-                      ),
-                    ],
-                  ),
+                width: 200,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Icon(FontAwesomeIcons.google),
+                    SizedBox(width: 15,),
+                    Text("Sign in with Google",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500
+                      )
+                    ),
+                  ],
                 ),
               ),
             ),
