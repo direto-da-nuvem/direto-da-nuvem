@@ -68,33 +68,36 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           drawer: Drawer(
             width: 200,
-            backgroundColor: const Color.fromARGB(201, 209, 242, 255),
+            backgroundColor: const Color.fromARGB(255, 55, 98, 118),
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
                 const DrawerHeader(
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(243, 245, 252, 255),
+                    color: Color.fromARGB(255, 245, 252, 255),
                   ),
                   child: Image(image: AssetImage("assets/logo.png")),
                 ),
-                ListTile(
-                  title: const Row(
-                    children: [
-                      Icon(Icons.apps),
-                      Text(" Dashboard"),
-                    ],
+                Container(
+                  color: const Color.fromARGB(255, 245, 252, 255),
+                  child: ListTile(
+                    title: const Row(
+                      children: [
+                        Icon(Icons.apps),
+                        Text(" Dashboard"),
+                      ],
+                    ),
+                    onTap: () {
+                      debugPrint("Dashboard clicked");
+                      Navigator.pop(context);
+                    },
                   ),
-                  onTap: () {
-                    debugPrint("Dashboard clicked");
-                    Navigator.pop(context);
-                  },
                 ),
                 ListTile(
                   title: const Row(
                     children: [
-                      Icon(Icons.add),
-                      Text(" Provide sample"),
+                      Icon(Icons.add, color: Colors.white70),
+                      Text(" Provide sample", style: TextStyle(color: Colors.white70)),
                     ],
                   ),
                   onTap: () {
@@ -105,8 +108,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 ListTile(
                   title: const Row(
                     children: [
-                      Icon(Icons.search),
-                      Text(" Search"),
+                      Icon(Icons.search, color: Colors.white70),
+                      Text(" Search", style: TextStyle(color: Colors.white70)),
                     ],
                   ),
                   onTap: () {
@@ -117,8 +120,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 ListTile(
                   title: const Row(
                     children: [
-                      Icon(Icons.messenger_outline_sharp),
-                      Text(" Messages"),
+                      Icon(Icons.messenger_outline_sharp, color: Colors.white70),
+                      Text(" Messages", style: TextStyle(color: Colors.white70)),
                     ],
                   ),
                   onTap: () {
@@ -135,8 +138,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 ListTile(
                   title: const Row(
                     children: [
-                      Icon(Icons.settings),
-                      Text(" Settings"),
+                      Icon(Icons.settings, color: Colors.white70),
+                      Text(" Settings", style: TextStyle(color: Colors.white70)),
                     ],
                   ),
                   onTap: () {
@@ -147,8 +150,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 ListTile(
                   title: const Row(
                     children: [
-                      Icon(Icons.info),
-                      Text(" Smaple.io"),
+                      Icon(Icons.info, color: Colors.white70),
+                      Text(" Sample.io", style: TextStyle(color: Colors.white70)),
                     ],
                   ),
                   onTap: () {
@@ -163,10 +166,12 @@ class _DashboardPageState extends State<DashboardPage> {
                     title: Row(
                       children: [
                         SizedBox(
-                            width: 130,
-                            child: Text(loginController.auth.currentUser!.displayName!.toString()),
+                            width: 140,
+                            child: Text(loginController.auth.currentUser!.displayName!,
+                              style: const TextStyle(color: Colors.white70)
+                            ),
                         ),
-                        const Icon(Icons.exit_to_app),
+                        const Icon(Icons.exit_to_app, color: Colors.white70),
                       ],
                     ),
                     onTap: () {
