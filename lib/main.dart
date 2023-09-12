@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       title: 'Sample',
       debugShowCheckedModeBanner: true,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(201,209,242,255)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255,55,98,118)),
     ),
       getPages: Pages.pages,
       initialRoute: Routes.LOGIN,
