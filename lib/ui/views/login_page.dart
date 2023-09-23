@@ -143,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         onPressed: (){
-                          Navigator.of(context).pushNamed(Routes.LOGIN);
+                          Navigator.of(context).pushNamed(Routes.DASHBOARD);
 
                         },
                         child: const SizedBox(
