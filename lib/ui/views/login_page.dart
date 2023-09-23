@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:sample/controllers/login_controller.dart';
@@ -43,9 +44,11 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
 
                   Container(
-                        width: 500,
+
                         color: Colors.white,
-                        child: Image.asset("assets/logo.png")),
+                        child: SvgPicture.asset(
+                            "assets/logo.svg",
+                            width: 300)),
                   SizedBox(
                       width: double.infinity,
                       child: Text(
@@ -134,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(5.0),
+                    padding: const EdgeInsets.all(4.0),
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           primary: Color.fromARGB(100,180,232,199), // Cor de fundo verde
@@ -154,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                             child: Text("Login",
                                 style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 32,
+                                    fontSize: 30,
                                     fontWeight: FontWeight.w500
                                 )
                             ),
@@ -165,10 +168,10 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(5.0),
+                    padding: const EdgeInsets.all(4.0),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.blue, // Cor de fundo azul
+                        primary: Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
                         ),
@@ -176,7 +179,7 @@ class _LoginPageState extends State<LoginPage> {
 
                         onPressed: loginController.signInWithGoogle,
                         child: const SizedBox(
-                          height: 70,
+                          height: 50,
                           width: double.infinity,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -196,8 +199,8 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                   ),
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
+                  Padding(
+                      padding: const EdgeInsets.all(4.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

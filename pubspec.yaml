@@ -43,6 +43,7 @@ dependencies:
   flutter_native_splash: ^2.3.2
   font_awesome_flutter: ^10.5.0
   rename: ^2.1.1
+  flutter_svg: any
 
 flutter_launcher_icons:
   image_path: "assets/icon.png"
