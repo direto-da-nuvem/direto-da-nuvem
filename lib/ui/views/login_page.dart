@@ -16,7 +16,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool isChecked = false;
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<LoginController>(
@@ -49,133 +49,29 @@ class _LoginPageState extends State<LoginPage> {
                         child: SvgPicture.asset(
                             "assets/logo.svg",
                             width: 300)),
-                  SizedBox(
-                      width: double.infinity,
-                      child: Text(
-                        'Log in To Sample',
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 30, fontFamily: 'Arial')
-                      ),
-                    ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: TextField(
-                      decoration: InputDecoration(
-                        labelText: 'Email', // Rótulo do campo
-                         // Dica de texto
-                        // Outros atributos de estilo, como prefixIcon, suffixIcon, etc.
-                      ),
-                      // Controlador de texto, manipulador de eventos e outras propriedades podem ser definidos aqui
-                    )
-
-
-                  ),
-                  SizedBox(
-                        width: double.infinity,
-                        child: TextField(
-                          decoration: InputDecoration(
-                             // Rótulo do campo
-                            hintText: 'Password', // Dica de texto
-                            // Outros atributos de estilo, como prefixIcon, suffixIcon, etc.
-                          ),
-                          // Controlador de texto, manipulador de eventos e outras propriedades podem ser definidos aqui
-                        )
-
-
-                    ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-
-                          children: [
-
-                            Checkbox(
-                                value: isChecked,
-                                onChanged: (newBool){
-                                  setState(() {
-                                    isChecked = newBool!;
-                                  });
-                                }, ),
-                            Text(
-                                'Remember me?',
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: 18, fontFamily: 'Arial')
-                            ),
-                          ],
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: Color.fromARGB(100, 240, 217, 220), // Cor de fundo verde
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
-                            ),
-                          ),
-                          onPressed: (){print('forgotten password clicado');},
-                          child: const SizedBox(
-                            height: 30,
-                            width: 120,
-                            child:
-                                Center(
-                                  child: Text("Forgotten Password?",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500
-                                      )
-                                  ),
-                                ),
-
-
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.all(4.0),
-                    child: ElevatedButton(
+                    child: SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          'Log in To Sample',
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 30, fontFamily: 'Arial')
+                        ),
+                      ),
+                  ),
+
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          primary: Color.fromARGB(100,180,232,199), // Cor de fundo verde
+                          primary: Colors.blue,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
                           ),
                         ),
-                        onPressed: (){
-                          Navigator.of(context).pushNamed(Routes.DASHBOARD);
-
-                        },
-                        child: const SizedBox(
-                          height: 50,
-                          width: double.infinity,
-                          child:
-                          Center(
-                            child: Text("Login",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.w500
-                                )
-                            ),
-                          ),
-
-
-                        ),
-                      ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
-                        ),
-                      ),
 
                         onPressed: loginController.signInWithGoogle,
                         child: const SizedBox(
@@ -198,46 +94,37 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ),
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Don't have an account?",
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.blue,
-                              decoration: TextDecoration.underline,
-                            ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
                           ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              primary: Color.fromARGB(100, 240, 217, 220), // Cor de fundo verde
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
-                              ),
-                            ),
-                            onPressed: (){print('Sign Up Clicado');},
-                            child: const SizedBox(
-                              height: 15,
-                              width: 60,
-                              child:
-                              Center(
-                                child: Text("Sign up",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500
-                                    )
-                                ),
+                        ),
+
+                        onPressed: null,
+                        child: const SizedBox(
+                          height: 50,
+                          width: double.infinity,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Icon(FontAwesomeIcons.apple),
+                              SizedBox(width: 15,),
+                              Text("Sign in with Apple",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500
+                                  )
                               ),
 
-
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     )
 
