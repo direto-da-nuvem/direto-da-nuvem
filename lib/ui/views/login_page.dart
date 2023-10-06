@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:sample/controllers/login_controller.dart';
 import 'package:sample/routes/app_pages.dart';
+import 'package:carousel_slider/carousel_controller.dart';
 
 
 
@@ -38,9 +39,9 @@ class _LoginPageState extends State<LoginPage> {
 
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(30.0),
                 child: Column(
-
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
 
                   Container(
@@ -49,84 +50,61 @@ class _LoginPageState extends State<LoginPage> {
                         child: SvgPicture.asset(
                             "assets/logo.svg",
                             width: 300)),
-                  Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: SizedBox(
-                        width: double.infinity,
-                        child: Text(
-                          'Log in To Sample',
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 30, fontFamily: 'Arial')
-                        ),
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: SizedBox(
+                            width: double.infinity,
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Text(
+                                'Log in:',
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(fontSize: 30, fontFamily: 'Arial')
+                              ),
+                            ),
+                          ),
                       ),
+
+
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
+                              ),
+                            ),
+
+                            onPressed: loginController.signInWithGoogle,
+                            child: const SizedBox(
+                              height: 50,
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Icon(FontAwesomeIcons.google),
+                                  SizedBox(width: 15,),
+                                  Text("Sign in with Google",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500
+                                      )
+                                  ),
+
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+
                   ),
 
-
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.blue,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
-                          ),
-                        ),
-
-                        onPressed: loginController.signInWithGoogle,
-                        child: const SizedBox(
-                          height: 50,
-                          width: double.infinity,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Icon(FontAwesomeIcons.google),
-                              SizedBox(width: 15,),
-                              Text("Sign in with Google",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500
-                                  )
-                              ),
-
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.blue,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
-                          ),
-                        ),
-
-                        onPressed: null,
-                        child: const SizedBox(
-                          height: 50,
-                          width: double.infinity,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Icon(FontAwesomeIcons.apple),
-                              SizedBox(width: 15,),
-                              Text("Sign in with Apple",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500
-                                  )
-                              ),
-
-                            ],
-                          ),
-                        ),
-                      ),
-                    )
 
 
                   ]

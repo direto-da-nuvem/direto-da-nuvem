@@ -17,13 +17,19 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -46,31 +52,12 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCQsTLm4NWySwoHdg6E9S-o-vtZzvlU2q8',
-    appId: '1:75523934173:web:4305ec2cbe09659f869834',
-    messagingSenderId: '75523934173',
-    projectId: 'sampletest-4273e',
-    authDomain: 'sampletest-4273e.firebaseapp.com',
-    storageBucket: 'sampletest-4273e.appspot.com',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCC_OKUUdnK4oBPHvu0V9yhayQjV7_Dop4',
-    appId: '1:75523934173:android:1a05270b10f127a5869834',
-    messagingSenderId: '75523934173',
-    projectId: 'sampletest-4273e',
-    storageBucket: 'sampletest-4273e.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCybcRu3W2T8f8aC0gvd-Z6TxAWMHlVBxI',
-    appId: '1:75523934173:ios:f0bf27007e97c5cc869834',
-    messagingSenderId: '75523934173',
-    projectId: 'sampletest-4273e',
-    storageBucket: 'sampletest-4273e.appspot.com',
-    androidClientId: '75523934173-4stcp4lqukhmgm4cvjkpjhefgg28vjv7.apps.googleusercontent.com',
-    iosClientId: '75523934173-2m67pr6ophc8bohe1secbvaa6edg90nq.apps.googleusercontent.com',
-    iosBundleId: 'br.uff.sample',
+    apiKey: 'AIzaSyCFIIadl0sAlT-Cr5vEv3NgGcOdZJuqplc',
+    appId: '1:159512930700:android:9b1c19741a4a926fc40ea9',
+    messagingSenderId: '159512930700',
+    projectId: 'dduff-e8a31',
+    databaseURL: 'https://dduff-e8a31-default-rtdb.firebaseio.com',
+    storageBucket: 'dduff-e8a31.appspot.com',
   );
 }
