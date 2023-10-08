@@ -34,9 +34,18 @@ class _DashboardPageState extends State<DashboardPage> {
     try{
     GoogleSignIn().signOut();
     FirebaseAuth.instance.signOut();
+    LoginController().backToLogin();
     Get.offAndToNamed(Routes.LOGIN);
     }catch(error){}
     Get.offAndToNamed(Routes.LOGIN);
+  }
+
+  void edit_images(){
+
+  }
+
+  void view_images(){
+    Get.offAndToNamed(Routes.SHOWCASE);
   }
 
   @override
@@ -54,15 +63,6 @@ class _DashboardPageState extends State<DashboardPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                //Image.asset(Images[current_image]),
-                CarouselSlider.builder(
-                  options: CarouselOptions(height: 300, autoPlay: true, autoPlayInterval: Duration(seconds: 5), viewportFraction: 1, autoPlayAnimationDuration: Duration(milliseconds: 350),),
-                  itemCount: Images.length,
-                  itemBuilder: (context,index,realIndex){
-                    final cImage = Images[index];
-                    return Image.asset(cImage, scale: 10);
-                  },
-                ),
                 GetBuilder<LoginController>(
                     init: Get.put(LoginController()),
                     builder: (loginController) {
@@ -74,7 +74,16 @@ class _DashboardPageState extends State<DashboardPage> {
                           Text(''),
                           Padding(
                             padding: const EdgeInsets.all(14.0),
-                            child: ElevatedButton(onPressed: () => being_logout(), child: Text('Logout')),
+                            child: Row(
+                              children: [
+                                ElevatedButton(onPressed: () => view_images(), child: Text('View Images')),
+                                Container(width: 10,),
+                                ElevatedButton(onPressed: () => edit_images(), child: Text('Edit Images')),
+                                Container(width: 10,),
+                                ElevatedButton(onPressed: () => being_logout(), child: Text('Logout')),
+
+                              ],
+                            ),
                           )
                         ],
                         mainAxisAlignment: MainAxisAlignment.center,

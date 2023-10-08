@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:sample/firebase_options.dart';
 import 'package:sample/routes/app_pages.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    config();
     return GetMaterialApp(
       title: 'DiretoDaUff',
       debugShowCheckedModeBanner: true,
@@ -28,4 +30,11 @@ class MyApp extends StatelessWidget {
       initialRoute: Routes.LOGIN,
     );
   }
+}
+
+void config() {
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight
+  ]);
 }

@@ -5,13 +5,17 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sample/routes/app_pages.dart';
 
 class LoginController extends GetxController {
+  bool ButtonPressed = false;
   final auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
   UserCredential? userCredential;
 
+  void pressButton(){ButtonPressed = true;}
+  void backToLogin(){ButtonPressed = false;}
+
   @override
   void onReady() {
-    if (auth.currentUser != null) {
+    if (auth.currentUser != null && ButtonPressed) {
       debugPrint("${auth.currentUser!.displayName}");
       Get.offAndToNamed(Routes.DASHBOARD);
     }
@@ -20,6 +24,7 @@ class LoginController extends GetxController {
   }
 
   Future<void> signInWithGoogle() async {
+    pressButton();
     if (auth.currentUser != null) {
       try {
         await auth.signOut();
