@@ -17,14 +17,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<LoginController>(
       init: Get.put(LoginController()),
       builder: (loginController) {
         return Scaffold(
-
+          appBar: AppBar(toolbarHeight: 10,),
           body: Center(
             child: Container(
               width: double.infinity,
@@ -39,17 +38,15 @@ class _LoginPageState extends State<LoginPage> {
 
               ),
               child: Padding(
-                padding: const EdgeInsets.all(30.0),
+                padding: const EdgeInsets.all(25.0),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-
-                  Container(
-
-                        color: Colors.white,
+                  Padding(
+                        padding: const EdgeInsets.fromLTRB(55,0,0,0),
                         child: SvgPicture.asset(
-                            "assets/logo.svg",
-                            width: 300)),
+                          "assets/logo.svg",
+                          width: 250)),
                   Column(
                     children: [
                       Padding(
@@ -62,15 +59,13 @@ class _LoginPageState extends State<LoginPage> {
                                 'Log in:',
                                 textAlign: TextAlign.center,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: 30, fontFamily: 'Arial')
+                                style: TextStyle(fontSize: 25, fontFamily: 'Arial')
                               ),
                             ),
                           ),
                       ),
-
-
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      Padding(
+                          padding: const EdgeInsets.fromLTRB(2,0,2,0),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               primary: Colors.blue,
@@ -82,12 +77,15 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: loginController.signInWithGoogle,
                             child: const SizedBox(
                               height: 50,
-                              width: double.infinity,
-                              child: Row(
+                              width: 450,
+                              child: SizedBox(
+                                //width:0,
+                                //height: 10,
+                                child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
+                                  SizedBox(width: 100),
                                   Icon(FontAwesomeIcons.google),
-                                  SizedBox(width: 15,),
                                   Text("Sign in with Google",
                                       style: TextStyle(
                                           color: Colors.white,
@@ -95,23 +93,18 @@ class _LoginPageState extends State<LoginPage> {
                                           fontWeight: FontWeight.w500
                                       )
                                   ),
-
+                                  SizedBox(width: 100),
                                 ],
-                              ),
+                              ),)
                             ),
                           ),
                         ),
                     ],
 
                   ),
-
-
-
                   ]
                 ),
               )
-
-
             )
           )
         );
