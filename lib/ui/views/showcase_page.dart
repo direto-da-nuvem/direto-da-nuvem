@@ -2,23 +2,15 @@ import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sample/controllers/dashboard_controller.dart';
-import 'package:sample/controllers/login_controller.dart';
-import 'package:sample/controllers/login_controller.dart';
 import 'package:sample/routes/app_pages.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sample/routes/app_pages.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:developer' as developer;
 
-// Itens do popMenuButton
-enum MenuItem { itemOne }
 
 class ShowcasePage extends StatefulWidget {
   const ShowcasePage({Key? key}) : super(key: key);
+
 
   @override
   State<ShowcasePage> createState() => _ShowcasePageState();
@@ -26,28 +18,54 @@ class ShowcasePage extends StatefulWidget {
 
 class _ShowcasePageState extends State<ShowcasePage> {
   String selectedItem = "ShowcasePage";
+  bool isLoading = true;
 
-  final Images = ["assets/photos/cat.jpg","assets/photos/rocket.jpg","assets/photos/lake.jpg"];
+  final Set<Image> imageAssets = {};
+  final Set<String> RequestedImages = {"cat.jpg","rocket.jpg","lake.jpg"};
+
+  final db = FirebaseFirestore.instance;
+  final storage = FirebaseStorage.instance;
+
+
+  Future<void> getImageData() async {
+    for(String s in RequestedImages){
+      dynamic i = await storage.ref().child(s).getData();
+      Image im = Image.memory(i,fit:BoxFit.cover);
+      imageAssets.add(im);
+      developer.log("mine: FINISHED LOADING IMAGE $s");}
+    finishedLoading();
+    return;
+  }
+  //final Images = ["assets/photos/cat.jpg","assets/photos/rocket.jpg","assets/photos/lake.jpg"];
   void goBack(){
     Get.offAndToNamed(Routes.DASHBOARD);
   }
+
+  void finishedLoading(){setState(() {
+    isLoading = false;
+  });}
+
   @override
   Widget build(BuildContext context) {
+    getImageData();
+    //while(showcaseController.isLoading){}
+    final tempImages = imageAssets.toList();
+
     return Scaffold(
       backgroundColor: Colors.black38,
-      body: GestureDetector(
+      body: isLoading ? const Center(child: CircularProgressIndicator()) : GestureDetector(
         onDoubleTap: ()=>goBack(),
         child: CarouselSlider.builder(
           options: CarouselOptions(height: 500, autoPlay: true, autoPlayInterval: Duration(seconds: 5), viewportFraction: 1, autoPlayAnimationDuration: Duration(milliseconds: 350),),
-          itemCount: Images.length,
+          itemCount: imageAssets.length,
           itemBuilder: (context,index,realIndex){
-            final cImage = Images[index];
-            return Image.asset(cImage, scale: 1);
-          },
+            return tempImages[index];
+            },
         ),
       ),
-      );
+    );
   }
 }
+
 
 
