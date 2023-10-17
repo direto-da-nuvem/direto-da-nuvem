@@ -1,18 +1,10 @@
-import 'package:carousel_slider/carousel_options.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sample/controllers/dashboard_controller.dart';
 import 'package:sample/controllers/login_controller.dart';
-import 'package:sample/controllers/login_controller.dart';
 import 'package:sample/routes/app_pages.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sample/routes/app_pages.dart';
 
 // Itens do popMenuButton
 enum MenuItem { itemOne }
