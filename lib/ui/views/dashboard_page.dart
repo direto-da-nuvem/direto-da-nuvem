@@ -33,7 +33,7 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   void edit_images(){
-
+    Get.offAndToNamed(Routes.EDIT);
   }
 
   void view_images(){
