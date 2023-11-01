@@ -5,4 +5,5 @@ abstract class Routes {
   static const LOGIN = '/login';
   static const SHOWCASE = '/showcase';
   static const EDIT = '/edit';
+  static const ADMIN = '/admin';
 }

@@ -43,10 +43,12 @@ dependencies:
   cloud_firestore: ^4.8.1
   flutter_launcher_icons: ^0.13.1
   flutter_native_splash: ^2.3.2
+  path_provider: ^2.1.1
   font_awesome_flutter: ^10.5.0
   carousel_slider: ^4.2.1
   rename: ^2.1.1
   flutter_svg: any
+  image_picker: any
 
 flutter_launcher_icons:
   image_path: "assets/newlogo.png"
@@ -91,6 +93,9 @@ flutter:
     - assets/photos/cat.jpg
     - assets/photos/lake.jpg
     - assets/photos/rocket.jpg
+    - assets/photos/castle.png
+    - assets/photos/clouds.png
+    - assets/requests_cache.txt
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
