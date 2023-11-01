@@ -109,6 +109,9 @@ class _EditPageState extends State<EditPage> {
 
       bool oldBool = present.removeAt(oldIndex);
       present.insert(newIndex, oldBool);
+
+      Image oldImage = imageAssets.removeAt(oldIndex);
+      imageAssets.insert(newIndex, oldImage);
       //then swaps to correct position
 
     });
