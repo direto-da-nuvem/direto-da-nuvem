@@ -40,6 +40,24 @@ class _DashboardPageState extends State<DashboardPage> {
     Get.offAndToNamed(Routes.SHOWCASE);
   }
 
+  void manage_admin_list(){
+    Get.offAndToNamed(Routes.ADMIN);
+  }
+
+  List<Widget> buttonsFromAdminStatus(bool admin){
+    List<Widget> children = <Widget>[];
+    children.add(ElevatedButton(onPressed: () => view_images(), child: Text('View Images')));
+    children.add(Container(width: 10,));
+    children.add(ElevatedButton(onPressed: () => edit_images(), child: Text('Edit Images')));
+    children.add(Container(width: 10,));
+    children.add(ElevatedButton(onPressed: () => being_logout(), child: Text('Logout')));
+    //first,
+    if(admin){
+      Widget adminButton = ElevatedButton(onPressed: () => being_logout(), child: Text('Logout'));
+      children.add(adminButton);
+    }
+    return children;
+  }
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DashboardController>(
@@ -63,18 +81,13 @@ class _DashboardPageState extends State<DashboardPage> {
                           Text(''),
                           Text('   Current User:   ' + loginController.auth.currentUser!.displayName!),
                            Text('   Current Email:   ' + loginController.auth.currentUser!.email!),
+                          Text('   Admin:   ' + loginController.admin.toString()),
+
                           Text(''),
                           Padding(
                             padding: const EdgeInsets.all(14.0),
                             child: Row(
-                              children: [
-                                ElevatedButton(onPressed: () => view_images(), child: Text('View Images')),
-                                Container(width: 10,),
-                                ElevatedButton(onPressed: () => edit_images(), child: Text('Edit Images')),
-                                Container(width: 10,),
-                                ElevatedButton(onPressed: () => being_logout(), child: Text('Logout')),
-
-                              ],
+                              children: buttonsFromAdminStatus(loginController.admin),
                             ),
                           )
                         ],

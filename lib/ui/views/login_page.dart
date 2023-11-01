@@ -13,6 +13,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<LoginController>(
@@ -39,10 +40,10 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                   Padding(
-                        padding: const EdgeInsets.fromLTRB(55,0,0,0),
+                        padding: const EdgeInsets.fromLTRB(15,0,0,0),
                         child: SvgPicture.asset(
                           "assets/logo.svg",
-                          width: 250)),
+                          width: 190)),
                   Column(
                     children: [
                       Padding(
