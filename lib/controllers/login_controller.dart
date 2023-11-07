@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sample/routes/app_pages.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class LoginController extends GetxController {
   bool _ButtonPressed = false;
@@ -13,18 +16,15 @@ class LoginController extends GetxController {
     _ButtonPressed = value;
   } //changed this. if code breaks, try reverting back
 
-  bool admin = false;
+  final admin = false;
   final auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
   UserCredential? userCredential;
 
   void pressButton(){ButtonPressed = true;}
   void backToLogin(){ButtonPressed = false;}
-  void checkIfAdmin(){
-    //open Admins.txt file from database storage
-    //check if current email is in there
-    admin = true;//if it is, change admin value to true
-  }
+
+
   @override
   void onReady() {
     if (auth.currentUser != null && ButtonPressed) {
