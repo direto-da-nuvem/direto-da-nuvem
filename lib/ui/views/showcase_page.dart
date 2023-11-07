@@ -48,14 +48,9 @@ class _ShowcasePageState extends State<ShowcasePage> {
                                                 //Queue1_Requests.txt
     dynamic requests = await storage.ref().child("Queue1_Requests.txt").getData();
 
-    for(int i =0;i<100;i++){print(i);}
-    print(requests);
-
     String sRequests = utf8.decode(requests);
-    print(sRequests);
-
     List<String> files = sRequests.toString().split('\n');
-    print(files);
+
     if(files.length<1){RequestedImages = defaultImages;print('No requests found, selected default images to play.');}
     else{
       RequestedImages = [];
@@ -65,7 +60,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
         if(files[i].removeAllWhitespace !='' && files[i] != Null && files[i] != ' ' && files[i] != ''){
         RequestedImages.add(files[i]);}
     }
-      RequestedImages.forEach((element) {print(element);});
+      //RequestedImages.forEach((element) {print(element);});
     }
     //var filePath = p.join(Directory.current.path, 'assets', 'requests_cache.txt');
     //p.join(Directory.current.path, 'assets', 'sample.txt');

@@ -32,7 +32,6 @@ class _EditPageState extends State<EditPage> {
         setState(() {
           isLoading = true;
         });
-        for(int i = 0;i<55;i++){print(pickedFile.name);}
         //Writes to 'AllFiles.txt' text file for now, which is a file that contains all images in the database storage
         String allImages = '';
         for(int i =0; i<myTiles.length;i++)
