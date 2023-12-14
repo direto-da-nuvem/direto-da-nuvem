@@ -9,8 +9,13 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 class LoginController extends GetxController {
   bool _ButtonPressed = false;
+  bool deviceConfigured = true;
 
   bool get ButtonPressed => _ButtonPressed;
+
+  void setDeviceConfigured(bool d){
+    deviceConfigured = d;
+  }
 
   set ButtonPressed(bool value) {
     _ButtonPressed = value;
@@ -29,7 +34,12 @@ class LoginController extends GetxController {
   void onReady() {
     if (auth.currentUser != null && ButtonPressed) {
       debugPrint("${auth.currentUser!.displayName}");
-      Get.offAndToNamed(Routes.DASHBOARD);
+      print(deviceConfigured);
+      if(deviceConfigured){
+      Get.offAndToNamed(Routes.DASHBOARD);}
+      else{
+        Get.offAndToNamed(Routes.DEVICES);
+      }
     }
 
     super.onReady();
@@ -46,7 +56,7 @@ class LoginController extends GetxController {
           backgroundColor: Colors.white,
         );
         update();
-        Get.offAndToNamed(Routes.LOGIN);
+        Get.offAndToNamed(Routes.LOGIN, arguments: deviceConfigured);
         await googleSignIn.signOut();
       } catch(e) {
         debugPrint("ERRO deslogando:\n$e");
@@ -67,7 +77,11 @@ class LoginController extends GetxController {
       debugPrint('googleAuth: $googleAuth');
       userCredential = await auth.signInWithCredential(credential);
       update();
-      Get.offAndToNamed(Routes.DASHBOARD);
+      if(deviceConfigured){
+        Get.offAndToNamed(Routes.DASHBOARD);}
+      else{
+        Get.offAndToNamed(Routes.DEVICES);
+      }
     }
     debugPrint('userCredential: $userCredential');
     debugPrint('auth: $auth');

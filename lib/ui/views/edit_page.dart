@@ -21,8 +21,10 @@ class EditPage extends StatefulWidget {
 
 class _EditPageState extends State<EditPage> {
 
-
+  var currentQueueFile = (Get.arguments[0])+"_Requests.txt";
+  var cameFromMain = (Get.arguments[1]);
   final List<Image> imageAssets = <Image>[];
+
   Future<void> beginUpload()
   async {
     await saveToDatabase();
@@ -47,7 +49,7 @@ class _EditPageState extends State<EditPage> {
       }
     gotImages=false;
 
-    Get.offAndToNamed(Routes.EDIT);
+    Get.offAndToNamed(Routes.EDIT,arguments: currentQueueFile);
   }
 
   void changeImage(String path){}
@@ -64,7 +66,7 @@ class _EditPageState extends State<EditPage> {
     if(present[i]){
     cacheRequests += myTiles[i] + '\n';}
     }
-    storage.ref().child("Queue1_Requests.txt").putString(cacheRequests);
+    storage.ref().child(currentQueueFile).putString(cacheRequests);
     isLoading = false;
 }
 
@@ -88,7 +90,11 @@ class _EditPageState extends State<EditPage> {
     //save changes
 
     //then go back
-    Get.offAndToNamed(Routes.DASHBOARD);
+    if(cameFromMain){
+    Get.offAndToNamed(Routes.DASHBOARD,arguments: currentQueueFile);}
+    else{
+      Get.offAndToNamed(Routes.QUEUE);
+    }
   }
 
   //note: two lists must have the same size, or code won´t run.
@@ -117,7 +123,7 @@ class _EditPageState extends State<EditPage> {
 
   }
 
-  String currentQueueFile = "Queue1_Requests.txt";
+ // String currentQueueFile = "Queue1_Requests.txt";
 
 
   Future<void> getRequestedTiles() async{
@@ -190,7 +196,7 @@ class _EditPageState extends State<EditPage> {
 
     if(!gotImages){getRequestedTiles();gotImages=true;}
     return Scaffold(
-      appBar: AppBar(toolbarHeight: 50, title: Text("Edit Current Queue"), centerTitle: false,leading: IconButton(onPressed: ()=> goBack(), icon: Icon(Icons.arrow_back)),),
+      appBar: AppBar(toolbarHeight: 50, title: Text("Edit Queue: "+Get.arguments[0]), centerTitle: false,leading: IconButton(onPressed: ()=> goBack(), icon: Icon(Icons.arrow_back)),),
       backgroundColor: Colors.white,
       body: isLoading? const Center(child:CircularProgressIndicator()) : Column(
         children: [

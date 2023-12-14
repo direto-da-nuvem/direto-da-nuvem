@@ -17,10 +17,13 @@ class ShowcasePage extends StatefulWidget {
 
 
   @override
-  State<ShowcasePage> createState() => _ShowcasePageState();
+  State<ShowcasePage> createState(){
+    return _ShowcasePageState();}
 }
 
 class _ShowcasePageState extends State<ShowcasePage> {
+  var currentQueueFile = (Get.arguments)+"_Requests.txt";
+
   String selectedItem = "ShowcasePage";
   bool isLoading = true;
 
@@ -30,12 +33,22 @@ class _ShowcasePageState extends State<ShowcasePage> {
   final db = FirebaseFirestore.instance;
   final storage = FirebaseStorage.instance;
 
-
+  bool instQueue = false;
   Future<void> getImageData() async {
-    await getRequestedImages();
+    if(currentQueueFile=="InstallationQueue_Requests.txt"){instQueue = true;
+    RequestedImages = ["1.png","2.png","3.png","4.png","5.png"];
+    print('Sword Coast');}
+    else{
+    await getRequestedImages();}
     for(String s in RequestedImages){
+      print(s);
+      print("1.png");
+      //print(s[5]);
+      //print("1.png"[5]);
       dynamic i = await storage.ref().child(s).getData();
+      print(s);
       Image im = Image.memory(i,fit:BoxFit.cover);
+      print(s);
       imageAssets.add(im);
       developer.log("FINISHED LOADING IMAGE $s");}
     finishedLoading();
@@ -45,8 +58,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   List<String> defaultImages = <String>['cat.jpg','rocket.jpg','lake.jpg'];
 
   Future<void> getRequestedImages() async{
-                                                //Queue1_Requests.txt
-    dynamic requests = await storage.ref().child("Queue1_Requests.txt").getData();
+    dynamic requests = await storage.ref().child(currentQueueFile).getData();
 
     String sRequests = utf8.decode(requests);
     List<String> files = sRequests.toString().split('\n');
@@ -62,18 +74,15 @@ class _ShowcasePageState extends State<ShowcasePage> {
     }
       //RequestedImages.forEach((element) {print(element);});
     }
-    //var filePath = p.join(Directory.current.path, 'assets', 'requests_cache.txt');
-    //p.join(Directory.current.path, 'assets', 'sample.txt');
-    //File file = File(filePath);
-    //var fileContent = file.readAsStringSync();
-    //print(fileContent);
-    //for(int i =0;i<100;i++){print(i);}
-
     return;
   }
-  //final Images = ["assets/photos/cat.jpg","assets/photos/rocket.jpg","assets/photos/lake.jpg"];
+
   void goBack(){
-    Get.offAndToNamed(Routes.DASHBOARD);
+    if(!instQueue){
+    Get.offAndToNamed(Routes.DASHBOARD, arguments: currentQueueFile);}
+    else{
+      Get.offAndToNamed(Routes.LOGIN, arguments: false);
+    }
   }
 
   void finishedLoading(){setState(() {
@@ -84,6 +93,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   dynamic tempImages;
   @override
   Widget build(BuildContext context) {
+    print('a');
     if(!gotImages){
     getImageData();
     gotImages = true;
