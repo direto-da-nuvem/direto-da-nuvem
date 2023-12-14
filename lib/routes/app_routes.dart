@@ -6,4 +6,7 @@ abstract class Routes {
   static const SHOWCASE = '/showcase';
   static const EDIT = '/edit';
   static const ADMIN = '/admin';
+  static const QUEUE = '/queue';
+  static const DEVICES = '/device';
+  static const START = '/start';
 }

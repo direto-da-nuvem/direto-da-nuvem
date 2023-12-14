@@ -3,22 +3,41 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:sample/controllers/login_controller.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sample/controllers/dashboard_controller.dart';
+import 'package:sample/controllers/login_controller.dart';
+import 'package:sample/routes/app_pages.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatefulWidget {
 
   const LoginPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginPage> createState() {return _LoginPageState();}
 }
+
 
 class _LoginPageState extends State<LoginPage> {
 
+
+  bool deviceConfigured = Get.arguments;
+  bool isLoading = false;
+
+
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<LoginController>(
+
+    return isLoading? Center(child: CircularProgressIndicator()): GetBuilder<LoginController>(
       init: Get.put(LoginController()),
       builder: (loginController) {
+        print(deviceConfigured);
+        print(Get.arguments);
+        loginController.setDeviceConfigured(deviceConfigured);
         return Scaffold(
           appBar: AppBar(toolbarHeight: 10,),
           body: Center(
