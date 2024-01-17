@@ -9,4 +9,5 @@ abstract class Routes {
   static const QUEUE = '/queue';
   static const DEVICES = '/device';
   static const START = '/start';
+  static const NOTIFICATIONS = '/notifications';
 }

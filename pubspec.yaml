@@ -53,16 +53,16 @@ dependencies:
   image_picker: any
 
 flutter_launcher_icons:
-  image_path: "assets/newlogo.png"
+  image_path: "assets/logo4.png"
   ios: true
   remove_alpha_ios: true
   android: "launcher_icon"
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/newlogo.png"
+  adaptive_icon_foreground: "assets/logo4.png"
 
 flutter_native_splash:
   color: "#3F51B5"
-  image: "assets/newlogo.png"
+  image: "assets/logo3.png"
   android: true
   ios: true
 

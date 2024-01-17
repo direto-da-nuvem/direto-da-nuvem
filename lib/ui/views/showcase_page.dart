@@ -22,7 +22,8 @@ class ShowcasePage extends StatefulWidget {
 }
 
 class _ShowcasePageState extends State<ShowcasePage> {
-  var currentQueueFile = (Get.arguments)+"_Requests.txt";
+  var currentQueueFile = (Get.arguments[0])+"_Requests.txt";
+  bool signedIn = Get.arguments[1];
 
   String selectedItem = "ShowcasePage";
   bool isLoading = true;
@@ -56,33 +57,31 @@ class _ShowcasePageState extends State<ShowcasePage> {
   }
 
   List<String> defaultImages = <String>['cat.jpg','rocket.jpg','lake.jpg'];
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> getRequestedImages() async{
-    dynamic requests = await storage.ref().child(currentQueueFile).getData();
-
-    String sRequests = utf8.decode(requests);
-    List<String> files = sRequests.toString().split('\n');
-
-    if(files.length<1){RequestedImages = defaultImages;print('No requests found, selected default images to play.');}
-    else{
-      RequestedImages = [];
-      for(int i = 0; i<files.length;i++){
-        print(files[i]);
-        print(i);
-        if(files[i].removeAllWhitespace !='' && files[i] != Null && files[i] != ' ' && files[i] != ''){
-        RequestedImages.add(files[i]);}
+    String qname = Get.arguments[0];
+    var c = await firestore.collection('queue').where('name',isEqualTo: qname).get();
+    var newQueueDocRef = c.docs[0].reference;
+    var c2 = await newQueueDocRef.collection('images').get();
+    RequestedImages = [];
+    for(int i =0; i<c2.docs.length;i++){
+      print(c2.docs[i].data()['imagePath']);
+      if(c2.docs[i].data()['present']){
+      RequestedImages.add(c2.docs[i].data()['imagePath']);}
     }
+
+    if(RequestedImages.length<1){RequestedImages = defaultImages;print('No requests found, selected default images to play.');}
       //RequestedImages.forEach((element) {print(element);});
-    }
     return;
   }
 
   void goBack(){
     if(!instQueue){
-    Get.offAndToNamed(Routes.DASHBOARD, arguments: currentQueueFile);}
-    else{
-      Get.offAndToNamed(Routes.LOGIN, arguments: false);
+      if(!signedIn){Get.offAndToNamed(Routes.LOGIN, arguments: true);}
+      else{Get.offAndToNamed(Routes.DASHBOARD, arguments: currentQueueFile);}
     }
+    else{Get.offAndToNamed(Routes.LOGIN, arguments: false);}
   }
 
   void finishedLoading(){setState(() {
@@ -90,7 +89,9 @@ class _ShowcasePageState extends State<ShowcasePage> {
   });}
 
   bool gotImages = false;
+  int gindex = 0;
   dynamic tempImages;
+  int getTimeForImage(int index){return 30*index + 3;}
   @override
   Widget build(BuildContext context) {
     print('a');
@@ -105,11 +106,13 @@ class _ShowcasePageState extends State<ShowcasePage> {
       body: isLoading ? const Center(child: CircularProgressIndicator()) : GestureDetector(
         onDoubleTap: ()=>goBack(),
         child: CarouselSlider.builder(
-          options: CarouselOptions(height: 500, autoPlay: true, autoPlayInterval: Duration(seconds: 5), viewportFraction: 1, autoPlayAnimationDuration: Duration(milliseconds: 350),),
+          options: CarouselOptions(height: 2500, autoPlay: true, autoPlayInterval: Duration(seconds: getTimeForImage(gindex)), viewportFraction: 1, autoPlayAnimationDuration: Duration(milliseconds: 350),),
           itemCount: imageAssets.length,
           itemBuilder: (context,index,realIndex){
+            gindex = index;
             return imageAssets[index];
             },
+          //carouselController: CarouselController(),
         ),
       ),
     );

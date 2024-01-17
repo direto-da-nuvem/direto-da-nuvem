@@ -38,9 +38,9 @@ class _DeviceInfoPageState extends State<DeviceInfoPage> {
     String deviceLocation = _deviceLocationController.text;
     String deviceSerial = await loadDeviceInfo();
     print('SERIAL:');
-    print(deviceSerial);
+    //print(deviceSerial);
 
-    Get.offAndToNamed(Routes.DASHBOARD);
+    //Get.offAndToNamed(Routes.DASHBOARD);
 
 
     if (deviceName.isNotEmpty && deviceLocation.isNotEmpty) {
@@ -51,8 +51,9 @@ class _DeviceInfoPageState extends State<DeviceInfoPage> {
       await firestore.collection('devices').add({
         'name': deviceName,
         'location': deviceLocation,
-        'serial': deviceSerial
+        'serial': deviceSerial //fix this later
       });
+
 
       // Show a snackbar indicating successful save
       ScaffoldMessenger.of(context).showSnackBar(
@@ -86,6 +87,7 @@ class _DeviceInfoPageState extends State<DeviceInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset : false,
       appBar: AppBar(
         title: Text('Register New Device'),
           leading: IconButton(onPressed: ()=> goBack(), icon: Icon(Icons.arrow_back))
