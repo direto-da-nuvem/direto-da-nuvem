@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -63,19 +64,52 @@ class _QueueListPageState extends State<QueueListPage> {
   }
   List<Queue> queues = <Queue>[];
 
-  String ogstring = "Queue 1;Queue1;TestDevice #1;gpaes@id.uff.br, admin1@gmail.com*Queue 2;Queue2;TestDevice #2;gpaes@id.uff.br*";
+  String ogstring = "Queue 1;Queue1;MeuDispositivo;gpaes@id.uff.br, admin1@gmail.com*Queue 2;Queue2;TestDevice #1;gpaes@id.uff.br*";
 
   void getQueueData() async{
-    dynamic requests = await storage.ref().child("queue_data.txt").getData();
-    queues = queuesFromString(utf8.decode(requests));
+
+    //dynamic requests = await storage.ref().child("queue_data.txt").getData();;//queuesFromString(utf8.decode(requests));
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    var c = await firestore.collection('queue').get();
+    for(int i =0; i<c.docs.length;i++){
+      Queue q = Queue(name: c.docs[i].data()['name'], id: c.docs[i].data()['name'].toString().removeAllWhitespace, device: c.docs[i].data()['device'], adminEmail: c.docs[i].data()['admin']);
+      queues.add(q);
+      print(q.toString());
+    }
+    print(queues.length);
+      // Get value of field date from document dashboard/totalVisitors
+    print("CCCCCCC");
+    print(c);
     queueLoaded = true;
+    queueLoading = false;
+    if(triedOnce && queues.length>0){triedOnce=false;}
+
     setState(() {});
   }
 
+  Future<String> getFirstQueueMappedToDevice(String deviceName) async{
+    //dynamic requests = await storage.ref().child("queue_data.txt").getData();;//queuesFromString(utf8.decode(requests));
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    var c = await firestore.collection('queue').get();
+    for(int i =0; i<c.docs.length;i++){
+      if(c.docs[i].data()['device'] == deviceName){
+        return c.docs[i].data()['name'].toString().removeAllWhitespace;
+      }
+    }
+    return "";
+  }
+
+  bool queueLoading = false;
+  bool triedOnce = false;
   @override
   Widget build(BuildContext context) {
     print('m ' + queueLoaded.toString());
-    if(!queueLoaded){
+    print(queues.length);
+    if(!queueLoaded && !queueLoading){
+      queueLoading = true;
+      getQueueData();
+    }
+    else if(!triedOnce && queues.length==0){
       getQueueData();
     }
     return queueLoaded? Scaffold(
@@ -235,6 +269,70 @@ class _QueueCreatePageState extends State<QueueCreatePage> {
     adminEmailController = TextEditingController();
   }
 
+  void _saveQueueInfo(String deviceName,  String qname, String adminEmail, Queue newQueue) async {
+    //String deviceSerial = await loadDeviceInfo();
+    print('SERIAL:');
+    //print(deviceSerial);
+
+    //Get.offAndToNamed(Routes.DASHBOARD);
+
+
+    if (qname.isNotEmpty) {
+      // Access Firestore instance
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+      // Add device information to Firestore
+      DocumentReference<Map<String, dynamic>> newQueueDocRef =await firestore.collection('queue').add({
+        'name': qname,
+        'device': deviceName,
+        'admin': adminEmail,
+      });
+
+      var c = await firestore.collection('queue').where('name',isEqualTo: qname).get();
+      newQueueDocRef = c.docs[0].reference;
+
+      CollectionReference<Map<String, dynamic>> imagesSubcollection = await newQueueDocRef.collection('images');
+      await imagesSubcollection.doc('STI-Inovação1080p.png').set
+        ({
+        'imagePath': 'STI-Inovação1080p.png',
+        'timestamp': FieldValue.serverTimestamp(),
+        'timeOnScreenSeconds': 5,
+        'animEntryEffect' : 0,
+        'animExitEffect': 0,
+        'order': 0,
+        'present': true
+      });
+
+
+
+      var c2 = await newQueueDocRef.collection('images').get();
+      for(int i =0; i<c.docs.length;i++){
+        //c2.docs[i]
+      }
+
+
+      // Show a snackbar indicating successful save
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Device information saved successfully!'),
+        ),
+      );
+
+      Navigator.pop(context);
+      Get.offAndToNamed(Routes.QUEUE, arguments: 1);
+    }
+    else {
+
+      // Show an error snackbar if fields are empty
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please fill in all required fields.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -270,7 +368,7 @@ class _QueueCreatePageState extends State<QueueCreatePage> {
                   device: deviceController.text,
                   adminEmail: adminEmailController.text,
                 );
-                Navigator.pop(context, newQueue);
+                _saveQueueInfo(newQueue.device, newQueue.name, newQueue.adminEmail, newQueue);
               },
               child: Text('Create Queue'),
             ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -24,33 +25,18 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   String selectedItem = "Dashboard";
-  String selectedQueue = "Queue1";
+  String selectedQueue = "final";
   bool gotQueue = false;
 
   void getDeviceQueue() async{
     dynamic requests = await storage.ref().child("queue_devices.txt").getData();
-    selectedQueue = queueDeviceFromString("Test Device #1",utf8.decode(requests));
+    selectedQueue = queueDeviceFromString("MeuDispositivo",utf8.decode(requests));
     gotQueue = true;
     setState(() {});
   }
 
   String queueDeviceFromString(deviceName, savedData){
-    List<String> allQueues = savedData.split('*');
-    String ans = '';
-    bool gotAnswer = false;
-    allQueues.forEach((element) {
-      if(element.removeAllWhitespace != ''){
-          print(element);
-          List<String> splitQueueData = element.split(';');
-          if(splitQueueData[0]==deviceName && !gotAnswer){
-            print('GOT');
-            ans =  splitQueueData[1]; gotAnswer = true;
-          }
-      }
-    });
-    print('ANSWER:');
-    print(ans);
-    return ans;
+   return 'final';
   }
 
   final Images = ["assets/photos/cat.jpg","assets/photos/rocket.jpg","assets/photos/lake.jpg"];
@@ -58,7 +44,7 @@ class _DashboardPageState extends State<DashboardPage> {
   bool admin = false;
   bool isLoading = true;
   final storage = FirebaseStorage.instance;
-  String deviceId = 'XCW1D7101 (Test Device #1)';
+  String deviceId = 'MeuDispositivo';
   final deviceInfoPlugin = DeviceInfoPlugin();
   dynamic deviceInfo;
 
@@ -111,6 +97,33 @@ class _DashboardPageState extends State<DashboardPage> {
 
     });
   }
+
+  Future<String> getFirstQueueMappedToDevice(String deviceSerial) async{
+    //dynamic requests = await storage.ref().child("queue_data.txt").getData();;//queuesFromString(utf8.decode(requests));
+    String deviceName = await DeviceNameFromSerial(deviceSerial);
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    var c = await firestore.collection('queue').get();
+    for(int i =0; i<c.docs.length;i++){
+
+      if(c.docs[i].data()['device'] == deviceName){
+        return c.docs[i].data()['name'].toString().removeAllWhitespace;
+      }
+    }
+    return "";
+  }
+
+  Future<String> DeviceNameFromSerial(String deviceSerial) async{
+    //dynamic requests = await storage.ref().child("queue_data.txt").getData();;//queuesFromString(utf8.decode(requests));
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    var c = await firestore.collection('device').get();
+    for(int i =0; i<c.docs.length;i++){
+      if(c.docs[i].data()['serial'] == deviceSerial){
+        return c.docs[i].data()['name'].toString().removeAllWhitespace;
+      }
+    }
+    return "";
+  }
+
   void edit_images(){
 
     Get.offAndToNamed(Routes.EDIT,arguments: [selectedQueue,true]);
@@ -119,10 +132,14 @@ class _DashboardPageState extends State<DashboardPage> {
     Get.offAndToNamed(Routes.QUEUE);
   }
   void view_images(){
-    Get.offAndToNamed(Routes.SHOWCASE,arguments: selectedQueue);
+    Get.offAndToNamed(Routes.SHOWCASE,arguments: [selectedQueue,true]);
   }
   void manage_admin_list(){
     Get.offAndToNamed(Routes.ADMIN);
+  }
+
+  void acessNotifications(){
+    Get.offAndToNamed(Routes.NOTIFICATIONS, arguments: [selectedQueue,true]);
   }
 
   List<Widget> buttonsFromAdminStatus(bool admin){
@@ -219,22 +236,30 @@ class _DashboardPageState extends State<DashboardPage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Text(''),
-              Text(''),
-              Text('Current User:   ' + currentAuth.currentUser!.displayName!),
-              Text('Current Email:   ' + currentAuth.currentUser!.email! + adminSuffix(admin)),
-              Text('Device: ' + deviceId + ' -- Selected Queue: ' + selectedQueue),
-              Text(''),
-              Text(''),
-              Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: Row(
-                  children: buttonsFromAdminStatus(admin),
-                ),
-              )
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(onPressed: (){acessNotifications();}, icon: Icon(Icons.notifications))
+                ],
+              ),
+              Column(
+                children: [
+                  Text('Current User:   ' + currentAuth.currentUser!.displayName!),
+                  Text('Current Email:   ' + currentAuth.currentUser!.email! + adminSuffix(admin)),
+                  Text('Device: ' + deviceId + ' -- Selected Queue: ' + selectedQueue),
+                  Text(''),
+                  Text(''),
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Row(
+                      children: buttonsFromAdminStatus(admin),
+                    ),
+                  )
+                ],
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+              ),
             ],
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
           ),
         ) : CircularProgressIndicator()
     );

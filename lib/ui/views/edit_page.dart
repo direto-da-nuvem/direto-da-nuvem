@@ -9,7 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:sample/routes/app_pages.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EditPage extends StatefulWidget {
   const EditPage({Key? key}) : super(key: key);
@@ -24,6 +24,10 @@ class _EditPageState extends State<EditPage> {
   var currentQueueFile = (Get.arguments[0])+"_Requests.txt";
   var cameFromMain = (Get.arguments[1]);
   final List<Image> imageAssets = <Image>[];
+
+  String timeOnScreen = "5";
+  String entryEffect = "";
+  String exitEffect = "";
 
   Future<void> beginUpload()
   async {
@@ -60,13 +64,15 @@ class _EditPageState extends State<EditPage> {
 
   Future<void> saveToDatabase() async{
     isLoading = true;
-    String cacheRequests = '';
-    for(int i =0; i<myTiles.length;i++)
-    {
-    if(present[i]){
-    cacheRequests += myTiles[i] + '\n';}
+
+    for(int i =0; i<myTiles.length;i++) {
+      bool currentlyPresent = present[i];
+      var c = await firestore.collection('queue').where('name',isEqualTo: Get.arguments[0]).get();
+      var newQueueDocRef = c.docs[0].reference;
+      var c2 = await newQueueDocRef.collection('images');
+      c2.doc(myTiles[i]).update(({'present':currentlyPresent}));
+      c2.doc(myTiles[i]).update(({'order':i}));
     }
-    storage.ref().child(currentQueueFile).putString(cacheRequests);
     isLoading = false;
 }
 
@@ -77,6 +83,7 @@ class _EditPageState extends State<EditPage> {
     {
       if(present[i]){
         cacheRequests += myTiles[i] + '\n';}
+
     }
     storage.ref().child("allImages.txt").putString(cacheRequests);
     isLoading = false;
@@ -105,6 +112,7 @@ class _EditPageState extends State<EditPage> {
 
   void updateTiles(int oldIndex, int newIndex){
 
+
     setState(() {
       if(oldIndex<newIndex){newIndex--;} //adjustment for moving downwards
 
@@ -121,34 +129,67 @@ class _EditPageState extends State<EditPage> {
 
     });
 
+
   }
 
  // String currentQueueFile = "Queue1_Requests.txt";
 
-
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   Future<void> getRequestedTiles() async{
 
+    String qname = Get.arguments[0];
+    var c = await firestore.collection('queue').where('name',isEqualTo: qname).get();
+    var newQueueDocRef = c.docs[0].reference;
+    var c2 = await newQueueDocRef.collection('images').get();
+    print(c2.docs[0].data()['imagePath']);
+    //CollectionReference<Map<String, dynamic>> imagesSubcollection = await newQueueDocRef.collection('images');
+    //await imagesSubcollection.add({
+    //  'imagePath': 'STI-Inovação1080p.png',
+    //  'timestamp': FieldValue.serverTimestamp(),
+    //  'timeOnScreenSeconds': 5,
+   //   'animEntryEffect' : 0,
+    //  'animExitEffect': 0,
+     // 'order': 0,
+     // 'present': 1
+    //});
+
+    while(myTiles.length!=0){ myTiles.removeLast();present.removeLast();}
+    List<String> presentImages = <String>[];
+    print(c2.docs.length);
+    for(int i =0; i<c2.docs.length;i++){
+      print(c2.docs[i].data()['imagePath']);
+      bool d = true;
+      d = false;
+      if(c2.docs[i].data()['present'] ==true){d=true;}
+      if(d){
+        myTiles.add(c2.docs[i].data()['imagePath']);
+        present.add(true);
+      }
+    }
+
+
+
     //first, load the images that are in your current queue
-    dynamic requests = await storage.ref().child(currentQueueFile).getData();
-
-    String sRequests = utf8.decode(requests);
-
-    List<String> files = sRequests.toString().split('\n');
-    if(files.length<1){print('No requests found, selected default images to edit.');}
-    else{
-      while(myTiles.length!=0){ myTiles.removeLast();present.removeLast();} //clear tiles lsits
-
-      for(int i = 0; i<files.length;i++){
-        if(files[i].removeAllWhitespace !='' && files[i] != Null && files[i] != ' ' && files[i] != ''){
-          myTiles.add(files[i].replaceAll(" ", "").replaceAll("\n", ""));
-          present.add(true); //can be modified later
+    //dynamic requests = await storage.ref().child(currentQueueFile).getData();
+    //
+    //String sRequests = utf8.decode(requests);
+//
+  //  List<String> files = sRequests.toString().split('\n');
+    //if(files.length<1){print('No requests found, selected default images to edit.');}
+    //else{
+     // while(myTiles.length!=0){ myTiles.removeLast();present.removeLast();} //clear tiles lsits
+//
+  //    for(int i = 0; i<files.length;i++){
+    //    if(files[i].removeAllWhitespace !='' && files[i] != Null && files[i] != ' ' && files[i] != ''){
+      //    myTiles.add(files[i].replaceAll(" ", "").replaceAll("\n", ""));
+        //  present.add(true); //can be modified later
           //dynamic tileImageData = storage.ref().child(files[i].replaceAll(" ", "").replaceAll("\n", "")).getData();
           //Image tileImage = Image.memory(tileImageData,fit:BoxFit.cover);
           //images.add(tileImage);
-        }
-      }
-      myTiles.forEach((element) {print(element);});
-    }
+        //}
+     // }
+     // myTiles.forEach((element) {print(element);});
+    //}
 
     //then, load the ones that are not in your current queue
     dynamic remainingRequests = await storage.ref().child("allImages.txt").getData();
@@ -181,8 +222,6 @@ class _EditPageState extends State<EditPage> {
     };
 
 
-
-
     isLoading = false;
     setState(() {
     });
@@ -191,6 +230,94 @@ class _EditPageState extends State<EditPage> {
 
   bool gotImages = false;
 
+  Future<void> _showConfigDialog(BuildContext context, String image) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Image Settings"),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildTextField("Time on Screen", "Enter time", (value) {
+                  timeOnScreen = value;
+                }),
+                _buildTextField("Entry Effect", "Enter entry effect", (value) {
+                  entryEffect = value;
+                }),
+                _buildTextField("Exit Effect", "Enter exit effect", (value) {
+                  exitEffect = value;
+                }),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Perform any logic with the entered data
+                print("Time On Screen: $timeOnScreen");
+                print("Entry Effect: $entryEffect");
+                print("Exit Effect: $exitEffect");
+
+                Navigator.of(context).pop();
+              },
+              child: Text("Save"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildTextField(String label, String hint, Function(String) onChanged) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextField(
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+        ),
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  void addImageToQueue(String image, int pos, bool present) async{
+    var c = await firestore.collection('queue').where('name',isEqualTo: Get.arguments[0]).get();
+    var newQueueDocRef = c.docs[0].reference;
+
+    CollectionReference<Map<String, dynamic>> imagesSubcollection = await newQueueDocRef.collection('images');
+    await imagesSubcollection.doc(image).set
+      ({
+      'imagePath': image,
+      'timestamp': FieldValue.serverTimestamp(),
+      'timeOnScreenSeconds': 5,
+      'animEntryEffect' : 0,
+      'animExitEffect': 0,
+      'order': pos,
+      'present': present
+    });
+
+    String message = "[" + Get.arguments[0] + "]: " + "Image " + image + generateMessageSuffix(present);
+    var j = await firestore.collection('messages').add({
+      'message': message,
+      'timestamp': FieldValue.serverTimestamp(),
+      'user': '',
+      'queue': Get.arguments[0],
+      'read': false
+    });
+  }
+
+  String generateMessageSuffix(bool present){
+    if(present){return " added to queue.";}
+    return " removed from queue.";
+  }
   @override
   Widget build(BuildContext context) {
 
@@ -224,8 +351,8 @@ class _EditPageState extends State<EditPage> {
                                   padding: const EdgeInsets.fromLTRB(0,0,4,0),
                                   child: Text((i+1).toString()),
                                 ),
-                                Container(width:40,child: IconButton(onPressed: ()=>{}, icon: Icon(Icons.settings))),
-                                Container(width:36,child: Checkbox(key: ValueKey(present[i]) ,value: present[i], onChanged: (bool? value) {setState(() {present[i] = !present[i];}); },)),
+                                Container(width:40,child: IconButton(onPressed: ()=>{_showConfigDialog(context,myTiles[i])}, icon: Icon(Icons.settings))),
+                                Container(width:36,child: Checkbox(key: ValueKey(present[i]) ,value: present[i], onChanged: (bool? value) {setState(() {present[i] = !present[i];}); addImageToQueue(myTiles[i], i, present[i]); },)),
                               ],
                             )
                             ),

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -6,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:sample/controllers/login_controller.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../../routes/app_pages.dart';
-
 class StartPage extends StatefulWidget {
 
   const StartPage({Key? key}) : super(key: key);
@@ -21,11 +21,10 @@ class _StartPageState extends State<StartPage> {
   bool checkingDevice = false;
 
   void checkIfDeviceConfigured() async{
-    deviceConfigured = false;
+    deviceConfigured = true;
     if(!deviceConfigured){
       Future.delayed(Duration.zero, () async {
-        print('abdsdab');
-        Get.offAndToNamed(Routes.SHOWCASE, arguments: "InstallationQueue");
+        Get.offAndToNamed(Routes.SHOWCASE, arguments: ["InstallationQueue",false]);
       });}
     else{
       Future.delayed(Duration.zero, () async {

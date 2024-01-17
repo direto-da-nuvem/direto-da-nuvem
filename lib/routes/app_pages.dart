@@ -7,6 +7,7 @@ import 'package:sample/ui/views/edit_page.dart';
 import 'package:sample/ui/views/admin_page.dart';
 import 'package:sample/ui/views/device_page.dart';
 import 'package:sample/ui/views/start_page.dart';
+import 'package:sample/ui/views/notifications.dart';
 
 import '../ui/views/queue_page.dart';
 
@@ -23,6 +24,7 @@ abstract class Pages{
     GetPage(name: Routes.ADMIN, page:() => const AdminPage()),
     GetPage(name: Routes.QUEUE, page:() => const QueueListPage()),
     GetPage(name: Routes.START, page:() => const StartPage()),
+    GetPage(name: Routes.NOTIFICATIONS, page:() => NotificationPage()),
 
     //QueueListPage
   ];

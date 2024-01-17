@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -6,6 +8,7 @@ import 'package:sample/controllers/login_controller.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sample/ui/views/queue_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sample/controllers/dashboard_controller.dart';
 import 'package:sample/controllers/login_controller.dart';
@@ -27,104 +30,177 @@ class _LoginPageState extends State<LoginPage> {
 
   bool deviceConfigured = Get.arguments;
   bool isLoading = false;
+  final storage = FirebaseStorage.instance;
 
+  void playQueue() async{
+    startedTimer = false;
+    String currentQueue = await getDeviceQueue();
+    Get.offAndToNamed(Routes.SHOWCASE, arguments: [currentQueue,false]);
+  }
 
+  Future<String> getDeviceQueue() async{
+    dynamic requests = await storage.ref().child("queue_devices.txt").getData();
+    var selectedQueue = 'final';//queueDeviceFromString("MeuDispositivo",utf8.decode(requests));
+    return selectedQueue;
+  }
+
+  String queueDeviceFromString(deviceName, savedData){
+    List<String> allQueues = savedData.split('*');
+    String ans = '';
+    bool gotAnswer = false;
+    allQueues.forEach((element) {
+      if(element.removeAllWhitespace != ''){
+        print(element);
+        List<String> splitQueueData = element.split(';');
+        if(splitQueueData[0]==deviceName && !gotAnswer){
+          print('GOT');
+          ans =  splitQueueData[1]; gotAnswer = true;
+        }
+      }
+    });
+    print('ANSWER:');
+    print(ans);
+    return ans;
+  }
+
+  Widget possibleButton(bool loggedIn, Widget w){
+    if(!loggedIn){return Text("Log in", style: TextStyle(fontSize: 25));}
+    return w;
+  }
+
+  bool startedTimer = false;
+  void countDown(){
+    Future.delayed(Duration(seconds: 30), () async {
+      if(startedTimer == true){
+      startedTimer = false;
+      String queue = await getDeviceQueue();
+      Get.offAndToNamed(Routes.SHOWCASE, arguments: [queue,false]);}
+    });
+  }
+
+  void loginbutton(){
+    startedTimer = false;
+
+  }
   @override
   Widget build(BuildContext context) {
-
+    if(startedTimer == false){
+      countDown();
+      startedTimer = true;
+    }
     return isLoading? Center(child: CircularProgressIndicator()): GetBuilder<LoginController>(
-      init: Get.put(LoginController()),
-      builder: (loginController) {
-        print(deviceConfigured);
-        print(Get.arguments);
-        loginController.setDeviceConfigured(deviceConfigured);
-        return Scaffold(
-          appBar: AppBar(toolbarHeight: 10,),
-          body: Center(
-            child: Container(
-              width: double.infinity,
-              height: double.infinity,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Color.fromARGB(100, 199, 209, 241), // Cor da borda vermelha
-                  width: 16.0, // Largura da borda
-                ),
-
-                borderRadius: BorderRadius.circular(20.0)
-
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(25.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                  Padding(
-                        padding: const EdgeInsets.fromLTRB(15,0,0,0),
-                        child: SvgPicture.asset(
-                          "assets/logo.svg",
-                          width: 190)),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: SizedBox(
-                            width: double.infinity,
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Text(
-                                'Log in:',
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: 25, fontFamily: 'Arial')
-                              ),
-                            ),
+        init: Get.put(LoginController()),
+        builder: (loginController) {
+          print(deviceConfigured);
+          print(Get.arguments);
+          loginController.setDeviceConfigured(deviceConfigured);
+          return Scaffold(
+              appBar: AppBar(toolbarHeight: 10,),
+              body: Center(
+                  child: Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Color.fromARGB(100, 199, 209, 241), // Cor da borda vermelha
+                            width: 16.0, // Largura da borda
                           ),
+
+                          borderRadius: BorderRadius.circular(20.0)
+
                       ),
-                      Padding(
-                          padding: const EdgeInsets.fromLTRB(2,0,2,0),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.blue,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
-                              ),
-                            ),
-
-                            onPressed: loginController.signInWithGoogle,
-                            child: const SizedBox(
-                              height: 50,
-                              width: 450,
-                              child: SizedBox(
-                                //width:0,
-                                //height: 10,
-                                child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      child: Padding(
+                        padding: const EdgeInsets.all(25.0),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Padding(
+                                  padding: const EdgeInsets.fromLTRB(15,0,0,0),
+                                  child: SvgPicture.asset(
+                                      "assets/logo.svg",
+                                      width: 190)),
+                              Column(
                                 children: [
-                                  SizedBox(width: 100),
-                                  Icon(FontAwesomeIcons.google),
-                                  Text("Sign in with Google",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w500
-                                      )
-                                  ),
-                                  SizedBox(width: 100),
-                                ],
-                              ),)
-                            ),
-                          ),
-                        ),
-                    ],
+                                  possibleButton(deviceConfigured, Padding(
+                                    padding: const EdgeInsets.fromLTRB(2,0,2,0),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        primary: Colors.grey,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
+                                        ),
+                                      ),
 
-                  ),
-                  ]
-                ),
+                                      onPressed: playQueue,
+                                      child: const SizedBox(
+                                          height: 30,
+                                          width: 450,
+                                          child: SizedBox(
+                                            //width:0,
+                                            //height: 10,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                SizedBox(width: 100),
+                                                Icon(Icons.play_arrow_outlined),
+                                                Text("Tocar fila atual",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 15,
+                                                        fontWeight: FontWeight.w500
+                                                    )
+                                                ),
+                                                SizedBox(width: 100),
+                                              ],
+                                            ),)
+                                      ),
+                                    ),
+                                  )),
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(2,5,2,0),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        primary: Colors.blue,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
+                                        ),
+                                      ),
+
+                                      onPressed: (){loginbutton();loginController.signInWithGoogle();},
+                                      child: const SizedBox(
+                                          height: 40,
+                                          width: 450,
+                                          child: SizedBox(
+                                            //width:0,
+                                            //height: 10,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                SizedBox(width: 100),
+                                                Icon(FontAwesomeIcons.google),
+                                                Text("Sign in with Google",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 15,
+                                                        fontWeight: FontWeight.w500
+                                                    )
+                                                ),
+                                                SizedBox(width: 100),
+                                              ],
+                                            ),)
+                                      ),
+                                    ),
+                                  ),
+                                ],
+
+                              ),
+                            ]
+                        ),
+                      )
+                  )
               )
-            )
-          )
-        );
-      }
+          );
+        }
     );
   }
 }
