@@ -40,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<String> getDeviceQueue() async{
     dynamic requests = await storage.ref().child("queue_devices.txt").getData();
-    var selectedQueue = 'final';//queueDeviceFromString("MeuDispositivo",utf8.decode(requests));
+    var selectedQueue = 'default';//queueDeviceFromString("MeuDispositivo",utf8.decode(requests));
     return selectedQueue;
   }
 
@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
 
   bool startedTimer = false;
   void countDown(){
-    Future.delayed(Duration(seconds: 30), () async {
+    Future.delayed(Duration(seconds: 60), () async {
       if(startedTimer == true){
       startedTimer = false;
       String queue = await getDeviceQueue();
@@ -78,13 +78,15 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  bool purposeful = false;
   void loginbutton(){
     startedTimer = false;
+    purposeful = true;
+  } //TO-DO: Set purposeful to false when leaving state
 
-  }
   @override
   Widget build(BuildContext context) {
-    if(startedTimer == false){
+    if(startedTimer == false &&  purposeful == false){
       countDown();
       startedTimer = true;
     }

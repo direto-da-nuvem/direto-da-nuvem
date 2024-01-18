@@ -7,8 +7,10 @@ import 'package:get/get.dart';
 import 'package:sample/controllers/login_controller.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../routes/app_pages.dart';
 
 class DeviceInfoPage extends StatefulWidget {
@@ -46,13 +48,28 @@ class _DeviceInfoPageState extends State<DeviceInfoPage> {
     if (deviceName.isNotEmpty && deviceLocation.isNotEmpty) {
       // Access Firestore instance
       FirebaseFirestore firestore = FirebaseFirestore.instance;
-
+      var tstamp = FieldValue.serverTimestamp();
       // Add device information to Firestore
-      await firestore.collection('devices').add({
+      DocumentReference newQueueDocRef = await firestore.collection('devices').add({
         'name': deviceName,
+        'queue': '8AKvDCetBMYBxKPcKJCb',
+        'timestamp': tstamp,
         'location': deviceLocation,
         'serial': deviceSerial //fix this later
       });
+      await firestore.collection('devices').doc(newQueueDocRef.id).set({
+        'name': deviceName,
+        'queue': '8AKvDCetBMYBxKPcKJCb',
+        'timestamp': tstamp,
+        'location': deviceLocation,
+        'serial': newQueueDocRef.id //fix this later
+      });
+
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('deviceId', newQueueDocRef.id);
+
+
+
 
 
       // Show a snackbar indicating successful save

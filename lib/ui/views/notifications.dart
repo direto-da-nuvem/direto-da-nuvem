@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
@@ -94,21 +95,28 @@ class _NotificationPageState extends State<NotificationPage> {
       body: ListView.builder(
         itemCount: notifications.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(
-              notifications[index]['message'],
-              style: TextStyle(
-                fontWeight: notifications[index]['read']
-                    ? FontWeight.normal
-                    : FontWeight.bold,
+          return Padding(
+             padding: const EdgeInsets.all(6.0),
+            child: Container(
+              color:CupertinoColors.opaqueSeparator,
+              child: ListTile(
+                title: Text(
+                  notifications[index]['message'],
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: notifications[index]['read']
+                        ? FontWeight.normal
+                        : FontWeight.bold,
+                  ),
+                ),
+                onTap: () {
+                  if (!notifications[index]['read']) {
+                    markAsRead(notifications[index]['id']);
+                  }
+                  showNotificationDialog(notifications[index]['message']);
+                },
               ),
             ),
-            onTap: () {
-              if (!notifications[index]['read']) {
-                markAsRead(notifications[index]['id']);
-              }
-              showNotificationDialog(notifications[index]['message']);
-            },
           );
         },
       ),

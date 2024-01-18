@@ -53,7 +53,7 @@ class _EditPageState extends State<EditPage> {
       }
     gotImages=false;
 
-    Get.offAndToNamed(Routes.EDIT,arguments: currentQueueFile);
+    Get.offAndToNamed(Routes.EDIT,arguments: [Get.arguments[0], Get.arguments[1]]);
   }
 
   void changeImage(String path){}
@@ -142,17 +142,6 @@ class _EditPageState extends State<EditPage> {
     var newQueueDocRef = c.docs[0].reference;
     var c2 = await newQueueDocRef.collection('images').get();
     print(c2.docs[0].data()['imagePath']);
-    //CollectionReference<Map<String, dynamic>> imagesSubcollection = await newQueueDocRef.collection('images');
-    //await imagesSubcollection.add({
-    //  'imagePath': 'STI-Inovação1080p.png',
-    //  'timestamp': FieldValue.serverTimestamp(),
-    //  'timeOnScreenSeconds': 5,
-   //   'animEntryEffect' : 0,
-    //  'animExitEffect': 0,
-     // 'order': 0,
-     // 'present': 1
-    //});
-
     while(myTiles.length!=0){ myTiles.removeLast();present.removeLast();}
     List<String> presentImages = <String>[];
     print(c2.docs.length);
@@ -245,23 +234,16 @@ class _EditPageState extends State<EditPage> {
                 _buildTextField("Entry Effect", "Enter entry effect", (value) {
                   entryEffect = value;
                 }),
-                _buildTextField("Exit Effect", "Enter exit effect", (value) {
-                  exitEffect = value;
-                }),
               ],
             ),
           ),
           actions: [
             TextButton(
               onPressed: () {
-                // Perform any logic with the entered data
-                print("Time On Screen: $timeOnScreen");
-                print("Entry Effect: $entryEffect");
-                print("Exit Effect: $exitEffect");
-
+                deleteImage(image);
                 Navigator.of(context).pop();
               },
-              child: Text("Save"),
+              child: Text("Delete Image"),
             ),
             TextButton(
               onPressed: () {
@@ -269,10 +251,53 @@ class _EditPageState extends State<EditPage> {
               },
               child: Text("Cancel"),
             ),
+            TextButton(
+              onPressed: () {
+                // Perform any logic with the entered data
+                print("Time On Screen: $timeOnScreen");
+                print("Entry Effect: $entryEffect");
+
+                Navigator.of(context).pop();
+              },
+              child: Text("Save"),
+            ),
           ],
         );
       },
     );
+  }
+
+  void deleteImage(String image) async{
+    isLoading = true;
+    if(await imageInQueue(image)){
+      isLoading = false;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Cannot delete images currently being used in a queue.'),
+        ),
+      );
+      return;
+    }
+    String cacheRequests = '';
+    myTiles.remove(image);
+    for(int i =0; i<myTiles.length;i++)
+    {
+        cacheRequests += myTiles[i] + '\n';
+    }
+    storage.ref().child("allImages.txt").putString(cacheRequests);
+    isLoading = false;
+    await saveToDatabase();
+    Get.offAndToNamed(Routes.EDIT, arguments: [Get.arguments[0], Get.arguments[1]]);
+  }
+
+  Future<bool> imageInQueue(String image) async{
+    var c = await firestore.collection('queue').get();
+    for(int i =0; i<c.docs.length;i++){
+      var newQueueDocRef = c.docs[i].reference;
+      var c2 = await newQueueDocRef.collection('images').where('imagePath',isEqualTo: image).get();
+      if(c2.docs.length>0){return true;}
+    }
+    return false;
   }
 
   Widget _buildTextField(String label, String hint, Function(String) onChanged) {
@@ -320,7 +345,6 @@ class _EditPageState extends State<EditPage> {
   }
   @override
   Widget build(BuildContext context) {
-
     if(!gotImages){getRequestedTiles();gotImages=true;}
     return Scaffold(
       appBar: AppBar(toolbarHeight: 50, title: Text("Edit Queue: "+Get.arguments[0]), centerTitle: false,leading: IconButton(onPressed: ()=> goBack(), icon: Icon(Icons.arrow_back)),),

@@ -49,9 +49,8 @@ dependencies:
   rename: ^2.1.1
   flutter_svg: any
   device_info_plus: any
-  shared_preferences: any
   image_picker: any
-
+  shared_preferences: any
 flutter_launcher_icons:
   image_path: "assets/logo4.png"
   ios: true
