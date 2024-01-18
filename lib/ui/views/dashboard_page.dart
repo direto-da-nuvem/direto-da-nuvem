@@ -25,18 +25,20 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   String selectedItem = "Dashboard";
-  String selectedQueue = "final";
+  String selectedQueue = "default";
   bool gotQueue = false;
 
   void getDeviceQueue() async{
-    dynamic requests = await storage.ref().child("queue_devices.txt").getData();
-    selectedQueue = queueDeviceFromString("MeuDispositivo",utf8.decode(requests));
+    String correctQueue = await getFirstQueueMappedToDevice();
+    print(correctQueue);
+    //dynamic requests = await storage.ref().child("queue_devices.txt").getData();
+    selectedQueue = correctQueue;//queueDeviceFromString("MeuDispositivo",utf8.decode(requests));
     gotQueue = true;
     setState(() {});
   }
 
   String queueDeviceFromString(deviceName, savedData){
-   return 'final';
+   return 'default';
   }
 
   final Images = ["assets/photos/cat.jpg","assets/photos/rocket.jpg","assets/photos/lake.jpg"];
@@ -44,7 +46,7 @@ class _DashboardPageState extends State<DashboardPage> {
   bool admin = false;
   bool isLoading = true;
   final storage = FirebaseStorage.instance;
-  String deviceId = 'MeuDispositivo';
+  String? deviceId = 'MeuDispositivo';
   final deviceInfoPlugin = DeviceInfoPlugin();
   dynamic deviceInfo;
 
@@ -98,30 +100,38 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
-  Future<String> getFirstQueueMappedToDevice(String deviceSerial) async{
+  Future<String> getFirstQueueMappedToDevice() async{
     //dynamic requests = await storage.ref().child("queue_data.txt").getData();;//queuesFromString(utf8.decode(requests));
-    String deviceName = await DeviceNameFromSerial(deviceSerial);
     FirebaseFirestore firestore = FirebaseFirestore.instance;
-    var c = await firestore.collection('queue').get();
-    for(int i =0; i<c.docs.length;i++){
-
-      if(c.docs[i].data()['device'] == deviceName){
-        return c.docs[i].data()['name'].toString().removeAllWhitespace;
-      }
-    }
-    return "";
+    String dId = await getDeviceId();
+    var c = await firestore.collection('devices').doc(dId);
+    var mappedQueueId;
+    var mappedQueue;
+    print(dId);
+    print('Got here!');
+    await c.get().then(
+            (DocumentSnapshot doc) {
+          final dataa = doc.data() as Map<String, dynamic>;
+          mappedQueueId = dataa['queue']; print(mappedQueueId); print(dataa['queue']);
+        });
+    print('fasfd');
+    print(mappedQueueId);
+    c = await firestore.collection('queue').doc(mappedQueueId);
+    await c.get().then(
+            (DocumentSnapshot doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          mappedQueue = data['name'];
+        });
+    return mappedQueue;
   }
 
-  Future<String> DeviceNameFromSerial(String deviceSerial) async{
+  Future<String> getDeviceId() async{
     //dynamic requests = await storage.ref().child("queue_data.txt").getData();;//queuesFromString(utf8.decode(requests));
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    var c = await firestore.collection('device').get();
-    for(int i =0; i<c.docs.length;i++){
-      if(c.docs[i].data()['serial'] == deviceSerial){
-        return c.docs[i].data()['name'].toString().removeAllWhitespace;
-      }
-    }
-    return "";
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    deviceId = prefs.getString('deviceId');
+    print(deviceId);
+    if (deviceId==null){return "MeuDispositivo#1";}
+    else {return deviceId!;}
   }
 
   void edit_images(){
@@ -144,7 +154,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   List<Widget> buttonsFromAdminStatus(bool admin){
     List<Widget> children = <Widget>[];
-    children.add(ElevatedButton(onPressed: () => view_images(), child: Text('View Images')));
+    children.add(ElevatedButton(onPressed: () => view_images(), child: Text('Play Queue')));
     if(admin){
       Widget queueButton = ElevatedButton(onPressed: () => edit_queues(), child: Text('Manage Queues'));
       children.add(Container(width: 10,));
@@ -185,7 +195,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   gotAuthData = true;}
                 checkIfAdmin(currentAuth.currentUser!.email!);
                 return Scaffold(
-                    appBar: AppBar(title: Text('DiretoDaUff')),
+                    appBar: AppBar(title: Text('Direto Da Uff')),
                     body: (!isLoading)? Column(
                       children: [
                         Text(''),
@@ -214,7 +224,7 @@ class _DashboardPageState extends State<DashboardPage> {
   TextEditingController textController1 = TextEditingController();
   TextEditingController textController2 = TextEditingController();
 
-
+  String StringNotNull(String? s){if (s==null){return "";} return s;}
   @override
   Widget build(BuildContext context) {
 
@@ -246,7 +256,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 children: [
                   Text('Current User:   ' + currentAuth.currentUser!.displayName!),
                   Text('Current Email:   ' + currentAuth.currentUser!.email! + adminSuffix(admin)),
-                  Text('Device: ' + deviceId + ' -- Selected Queue: ' + selectedQueue),
+                  Text('Device: ' + StringNotNull(deviceId) + ' -- Selected Queue: ' + selectedQueue),
                   Text(''),
                   Text(''),
                   Padding(
