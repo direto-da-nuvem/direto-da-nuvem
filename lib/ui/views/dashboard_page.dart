@@ -29,16 +29,14 @@ class _DashboardPageState extends State<DashboardPage> {
   bool gotQueue = false;
 
   void getDeviceQueue() async{
+    gotQueue = true;
     String correctQueue = await getFirstQueueMappedToDevice();
     print(correctQueue);
     //dynamic requests = await storage.ref().child("queue_devices.txt").getData();
     selectedQueue = correctQueue;//queueDeviceFromString("MeuDispositivo",utf8.decode(requests));
-    gotQueue = true;
+    finishedGettingQueue = true;
+    print(deviceName);
     setState(() {});
-  }
-
-  String queueDeviceFromString(deviceName, savedData){
-   return 'default';
   }
 
   final Images = ["assets/photos/cat.jpg","assets/photos/rocket.jpg","assets/photos/lake.jpg"];
@@ -47,6 +45,7 @@ class _DashboardPageState extends State<DashboardPage> {
   bool isLoading = true;
   final storage = FirebaseStorage.instance;
   String? deviceId = 'MeuDispositivo';
+  String? deviceName = 'MeuDispositivo';
   final deviceInfoPlugin = DeviceInfoPlugin();
   dynamic deviceInfo;
 
@@ -113,6 +112,7 @@ class _DashboardPageState extends State<DashboardPage> {
             (DocumentSnapshot doc) {
           final dataa = doc.data() as Map<String, dynamic>;
           mappedQueueId = dataa['queue']; print(mappedQueueId); print(dataa['queue']);
+          deviceName = dataa['name'];
         });
     print('fasfd');
     print(mappedQueueId);
@@ -183,6 +183,7 @@ class _DashboardPageState extends State<DashboardPage> {
     if(!admin){return '';}
     return '  (Admin)';
   }
+
   Widget loadUserContext() {
     return GetBuilder<DashboardController>(
         init: Get.put(DashboardController()),
@@ -223,8 +224,10 @@ class _DashboardPageState extends State<DashboardPage> {
   bool created = false;
   TextEditingController textController1 = TextEditingController();
   TextEditingController textController2 = TextEditingController();
+  bool finishedGettingQueue = false;
 
   String StringNotNull(String? s){if (s==null){return "";} return s;}
+
   @override
   Widget build(BuildContext context) {
 
@@ -234,14 +237,16 @@ class _DashboardPageState extends State<DashboardPage> {
     if(!gotQueue){
       getDeviceQueue();
     }
+    print(isLoading);
+    print(finishedGettingQueue);
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title:
-          Text("DiretoDaUff"),
+          Text("Direto Da Uff"),
           centerTitle: false,
         ),
-        body: (!isLoading)?
+        body: (!isLoading && finishedGettingQueue)?
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -256,7 +261,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 children: [
                   Text('Current User:   ' + currentAuth.currentUser!.displayName!),
                   Text('Current Email:   ' + currentAuth.currentUser!.email! + adminSuffix(admin)),
-                  Text('Device: ' + StringNotNull(deviceId) + ' -- Selected Queue: ' + selectedQueue),
+                  Text('Device: ' + StringNotNull(deviceName) + ' -- Selected Queue: ' + selectedQueue),
                   Text(''),
                   Text(''),
                   Padding(
@@ -271,7 +276,7 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ],
           ),
-        ) : CircularProgressIndicator()
+        ) : Center(child: CircularProgressIndicator())
     );
   }
 }
