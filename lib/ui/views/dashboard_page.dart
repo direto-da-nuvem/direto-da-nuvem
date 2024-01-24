@@ -164,7 +164,7 @@ class _DashboardPageState extends State<DashboardPage> {
       children.add(Container(width: 10,));
       children.add(editB);
 
-      Widget adminButton = ElevatedButton(onPressed: () => manage_admin_list(), child: Text('Manage Admins'));
+      Widget adminButton = ElevatedButton(onPressed: () => manage_admin_list(), child: Text('Manage Super Admins'));
       children.add(Container(width: 10,));
       children.add(adminButton);
 

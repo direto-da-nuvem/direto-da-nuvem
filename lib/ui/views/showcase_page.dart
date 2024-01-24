@@ -91,7 +91,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   bool gotImages = false;
   int gindex = 0;
   dynamic tempImages;
-  int getTimeForImage(int index){return 30*index + 3;}
+  int getTimeForImage(int index){return 8;}
   @override
   Widget build(BuildContext context) {
     print('a');

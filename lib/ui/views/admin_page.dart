@@ -100,7 +100,7 @@ class _AdminPageState extends State<AdminPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset : false,
-      appBar: AppBar(toolbarHeight: 50, title: Text("Manage Admin List"), centerTitle: false,leading: IconButton(onPressed: ()=> goBack(), icon: Icon(Icons.arrow_back)),),
+      appBar: AppBar(toolbarHeight: 50, title: Text("Manage Super Admin List"), centerTitle: false,leading: IconButton(onPressed: ()=> goBack(), icon: Icon(Icons.arrow_back)),),
       body: Center(
         child: Column(
                 children: [
@@ -109,7 +109,7 @@ class _AdminPageState extends State<AdminPage> {
                   TextField(controller: TextEditingController(),
                     onChanged: (String texto) => newAdmin = texto,decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'Input the admin´s email',
+                    labelText: 'Input the super admin´s email',
                   ),)),
                   Container(height:15),
                   ElevatedButton(onPressed: ()=>saveToDatabase(), child: Container(width:170,child: Center(child: Text("Add to Admin List")))),
