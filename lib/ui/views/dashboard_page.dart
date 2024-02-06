@@ -181,7 +181,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   String adminSuffix(bool admin){
     if(!admin){return '';}
-    return '  (Admin)';
+    return '  (Super Admin)';
   }
 
   Widget loadUserContext() {

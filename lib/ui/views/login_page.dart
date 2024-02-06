@@ -70,8 +70,8 @@ class _LoginPageState extends State<LoginPage> {
 
   bool startedTimer = false;
   void countDown(){
-    Future.delayed(Duration(seconds: 60), () async {
-      if(startedTimer == true){
+    Future.delayed(Duration(seconds: 45), () async {
+      if(startedTimer == true && !Get.arguments[0]){
       startedTimer = false;
       String queue = await getDeviceQueue();
       Get.offAndToNamed(Routes.SHOWCASE, arguments: [queue,false]);}
@@ -116,85 +116,83 @@ class _LoginPageState extends State<LoginPage> {
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Padding(
-                                  padding: const EdgeInsets.fromLTRB(15,0,0,0),
+                              Expanded(
+                                child: Container(
+                                  padding:const EdgeInsets.fromLTRB(25,25,25,25) ,
                                   child: SvgPicture.asset(
                                       "assets/logo.svg",
-                                      width: 190)),
-                              Column(
-                                children: [
-                                  possibleButton(deviceConfigured, Padding(
-                                    padding: const EdgeInsets.fromLTRB(2,0,2,0),
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        primary: Colors.grey,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
-                                        ),
                                       ),
-
-                                      onPressed: playQueue,
-                                      child: const SizedBox(
-                                          height: 30,
-                                          width: 450,
-                                          child: SizedBox(
-                                            //width:0,
-                                            //height: 10,
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                SizedBox(width: 100),
-                                                Icon(Icons.play_arrow_outlined),
-                                                Text("Tocar fila atual",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 15,
-                                                        fontWeight: FontWeight.w500
-                                                    )
-                                                ),
-                                                SizedBox(width: 100),
-                                              ],
-                                            ),)
-                                      ),
-                                    ),
-                                  )),
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(2,5,2,0),
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        primary: Colors.blue,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
-                                        ),
-                                      ),
-
-                                      onPressed: (){loginbutton();loginController.signInWithGoogle();},
-                                      child: const SizedBox(
-                                          height: 40,
-                                          width: 450,
-                                          child: SizedBox(
-                                            //width:0,
-                                            //height: 10,
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                SizedBox(width: 100),
-                                                Icon(FontAwesomeIcons.google),
-                                                Text("Sign in with Google",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 15,
-                                                        fontWeight: FontWeight.w500
-                                                    )
-                                                ),
-                                                SizedBox(width: 100),
-                                              ],
-                                            ),)
-                                      ),
+                                ),
+                              ),
+                              possibleButton(deviceConfigured, Padding(
+                                padding: const EdgeInsets.fromLTRB(2,0,2,0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.grey,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
                                     ),
                                   ),
-                                ],
 
+                                  onPressed: playQueue,
+                                  child: const SizedBox(
+                                      height: 30,
+                                      width: 450,
+                                      child: SizedBox(
+                                        //width:0,
+                                        //height: 10,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            SizedBox(width: 100),
+                                            Icon(Icons.play_arrow_outlined),
+                                            Text("Tocar fila atual",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w500
+                                                )
+                                            ),
+                                            SizedBox(width: 100),
+                                          ],
+                                        ),)
+                                  ),
+                                ),
+                              )),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(2,5,2,0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.blue,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
+                                    ),
+                                  ),
+
+                                  onPressed: (){loginbutton();loginController.signInWithGoogle();},
+                                  child: const SizedBox(
+                                      height: 40,
+                                      width: 450,
+                                      child: SizedBox(
+                                        //width:0,
+                                        //height: 10,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            SizedBox(width: 100),
+                                            Icon(FontAwesomeIcons.google),
+                                            Text("Sign in with Google",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w500
+                                                )
+                                            ),
+                                            SizedBox(width: 100),
+                                          ],
+                                        ),)
+                                  ),
+                                ),
                               ),
                             ]
                         ),

@@ -14,7 +14,6 @@ Future<void> goBack() async{
     queueLoaded = false;
     Get.offAndToNamed(Routes.DASHBOARD);
 }
-
 final storage = FirebaseStorage.instance;
 bool queueLoaded = false;
 
@@ -23,7 +22,6 @@ class Queue {
   String id;
   String device;
   String adminEmail;
-
   Queue({required this.name, required this.id, required this.device, required this.adminEmail});
 
   String toString(){
@@ -39,8 +37,6 @@ class QueueListPage extends StatefulWidget {
   @override
   _QueueListPageState createState() => _QueueListPageState();
 }
-
-
 class _QueueListPageState extends State<QueueListPage> {
   Queue queueFromString(String qsplit){
     List<String> qparts = qsplit.split(';');
@@ -52,19 +48,10 @@ class _QueueListPageState extends State<QueueListPage> {
     return Queue(name: qparts[0], id:qparts[1], device: qparts[2], adminEmail: qparts[3]);
   }
 
-  List<Queue> queuesFromString(String qstring){
-    List<Queue> queues = <Queue>[];
-    List<String> qsplits = qstring.split('*');
-    qsplits.forEach((element) {
-      print(element);
-      if(element.removeAllWhitespace != ''){
-      queues.add(queueFromString(element));}
-    });
-    return queues;
-  }
   List<Queue> queues = <Queue>[];
-
-  String ogstring = "Queue 1;Queue1;MeuDispositivo;gpaes@id.uff.br, admin1@gmail.com*Queue 2;Queue2;TestDevice #1;gpaes@id.uff.br*";
+  List<String> deviceIds = <String>[];
+  List<String> deviceNames = <String>[];
+  List<String> devices = <String>[];
 
   void getQueueData() async{
 
@@ -76,10 +63,18 @@ class _QueueListPageState extends State<QueueListPage> {
       queues.add(q);
       print(q.toString());
     }
-    print(queues.length);
-      // Get value of field date from document dashboard/totalVisitors
-    print("CCCCCCC");
-    print(c);
+
+
+
+
+    var d = await firestore.collection('devices').get();
+    for(int i =0; i<c.docs.length;i++){
+       String dId = d.docs[i].data()['serial'];
+       devices.add(dId);
+       deviceIds.add(dId);
+       deviceNames.add(d.docs[i].data()['name']);
+    }
+
     queueLoaded = true;
     queueLoading = false;
     if(triedOnce && queues.length>0){triedOnce=false;}
@@ -132,7 +127,7 @@ class _QueueListPageState extends State<QueueListPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => QueueEditPage(queue: queues[index]),
+                        builder: (context) => QueueEditPage(queue: queues[index],deviceIds: deviceIds, deviceNames: deviceNames,),
                       ),
                     );
                   },
@@ -165,27 +160,28 @@ class _QueueListPageState extends State<QueueListPage> {
   }
 }
 
+
 class QueueEditPage extends StatefulWidget {
   final Queue queue;
+  final List<String> deviceNames;
+  final List<String> deviceIds;
 
-  QueueEditPage({required this.queue});
+  QueueEditPage({required this.queue, required this.deviceNames, required this.deviceIds});
 
   @override
   _QueueEditPageState createState() => _QueueEditPageState();
 }
-
-void setNewDevice(String device, String queueName){
-  String newQDfile = '';
-  newQDfile = 'No Device;Queue2*';
-  newQDfile += device + ';' + queueName + '*';
-  storage.ref().child("queue_devices.txt").putString(newQDfile);
-}
-
 class _QueueEditPageState extends State<QueueEditPage> {
   late TextEditingController nameController;
   late TextEditingController deviceController;
   late TextEditingController adminEmailController;
 
+  List<DropdownMenuItem<String>> deviceOptionItems = <DropdownMenuItem<String>>[];
+  String _dropdownValue ="";
+
+  void getStartingValues() async{
+    _dropdownValue = widget.deviceIds[0];
+  }
   @override
   void initState() {
     super.initState();
@@ -194,12 +190,18 @@ class _QueueEditPageState extends State<QueueEditPage> {
     adminEmailController = TextEditingController(text: widget.queue.adminEmail);
   }
 
+
   @override
   Widget build(BuildContext context) {
+    getStartingValues();
+    deviceOptionItems = <DropdownMenuItem<String>>[];
+    for(int i =0; i<widget.deviceNames.length;i++){
+      deviceOptionItems.add(DropdownMenuItem(child: Text(widget.deviceNames[i]),value:widget.deviceIds[i]));
+    }
     return Scaffold(
       resizeToAvoidBottomInset : false,
       appBar: AppBar(
-        title: Text('Edit Queue'),
+        title: Text('Editar Fila'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -210,9 +212,15 @@ class _QueueEditPageState extends State<QueueEditPage> {
               controller: nameController,
               decoration: InputDecoration(labelText: 'Name'),
             ),
-            TextField(
-              controller: deviceController,
-              decoration: InputDecoration(labelText: 'Device'),
+            Row(
+              children: [
+                Text("Adicionar novo dispositivo:  "),
+                DropdownButton( items: deviceOptionItems, value: _dropdownValue, onChanged: (String? value) {if(value is String){
+                  print(value); setState(() {
+                    _dropdownValue = value;
+                  }); print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+                }}),
+              ],
             ),
             TextField(
               controller: adminEmailController,
@@ -225,12 +233,11 @@ class _QueueEditPageState extends State<QueueEditPage> {
                   onPressed: () {
                     // Save the changes and pop the page
                     widget.queue.name = nameController.text;
-                    widget.queue.device = deviceController.text;
+                    widget.queue.device = _dropdownValue;
                     widget.queue.adminEmail = adminEmailController.text;
-                    setNewDevice(widget.queue.device,widget.queue.name);
                     Navigator.pop(context);
                   },
-                  child: Text('Save Changes'),
+                  child: Text('Salvar Mudanças'),
                 ),
                 SizedBox(width: 12,),
                 ElevatedButton(
@@ -239,9 +246,21 @@ class _QueueEditPageState extends State<QueueEditPage> {
                     queueLoaded = false;
                     Get.offAndToNamed(Routes.EDIT,arguments: [widget.queue.id,false]);
                   },
-                  child: Text('Edit Queue Images'),
+                  child: Text('Editar Imagens da Fila'),
                 ),
-
+                SizedBox(width: 12,),
+                ElevatedButton(
+                  onPressed: () {
+                    // Save the changes and pop the page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => QueueAnimationPage(queue: widget.queue),
+                      ),
+                    );
+                  },
+                  child: Text('Editar Animações da Fila'),
+                ),
               ],
             ),
           ],
@@ -251,11 +270,11 @@ class _QueueEditPageState extends State<QueueEditPage> {
   }
 }
 
+
 class QueueCreatePage extends StatefulWidget {
   @override
   _QueueCreatePageState createState() => _QueueCreatePageState();
 }
-
 class _QueueCreatePageState extends State<QueueCreatePage> {
   late TextEditingController nameController;
   late TextEditingController deviceController;
@@ -269,23 +288,28 @@ class _QueueCreatePageState extends State<QueueCreatePage> {
     adminEmailController = TextEditingController();
   }
 
-  void _saveQueueInfo(String deviceName,  String qname, String adminEmail, Queue newQueue) async {
-    //String deviceSerial = await loadDeviceInfo();
-    print('SERIAL:');
-    //print(deviceSerial);
+  String deviceIdFromName(String name){
+    return name;
+  }
 
-    //Get.offAndToNamed(Routes.DASHBOARD);
+  String queueIdFromName(String name){
+    return '';
+  }
 
-
+  void _saveQueueInfo(String? deviceIdChosen,  String qname, String adminEmail, Queue newQueue) async {
     if (qname.isNotEmpty) {
       // Access Firestore instance
       FirebaseFirestore firestore = FirebaseFirestore.instance;
+      if(deviceIdChosen == null || deviceIdChosen.removeAllWhitespace == ""){deviceIdChosen = "none";}
       // Add device information to Firestore
       DocumentReference<Map<String, dynamic>> newQueueDocRef =await firestore.collection('queue').add({
         'name': qname,
-        'device': deviceName,
+        'device': deviceIdChosen,
         'admin': adminEmail,
+        'entryEffect': "default",
+        'screenTime': 10
       });
+
 
       var c = await firestore.collection('queue').where('name',isEqualTo: qname).get();
       newQueueDocRef = c.docs[0].reference;
@@ -303,12 +327,12 @@ class _QueueCreatePageState extends State<QueueCreatePage> {
       });
 
 
-
-      var c2 = await newQueueDocRef.collection('images').get();
-      for(int i =0; i<c.docs.length;i++){
-        //c2.docs[i]
-      }
-
+      if(deviceIdChosen.toLowerCase() != "none"){
+      String deviceId = deviceIdFromName(deviceIdChosen);
+      String queueId = queueIdFromName(qname);
+      await firestore.collection('devices').doc(deviceId).update({
+        'queue': queueId,
+      }); }
 
       // Show a snackbar indicating successful save
       ScaffoldMessenger.of(context).showSnackBar(
@@ -321,7 +345,6 @@ class _QueueCreatePageState extends State<QueueCreatePage> {
       Get.offAndToNamed(Routes.QUEUE, arguments: 1);
     }
     else {
-
       // Show an error snackbar if fields are empty
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -332,6 +355,13 @@ class _QueueCreatePageState extends State<QueueCreatePage> {
     }
   }
 
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  void alterQueueDevice(String deviceId, String qId) async{
+    await firestore.collection('devices').doc(deviceId).update({
+      'queue': qId,
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -339,7 +369,7 @@ class _QueueCreatePageState extends State<QueueCreatePage> {
       resizeToAvoidBottomInset : false,
 
       appBar: AppBar(
-        title: Text('Create Queue'),
+        title: Text('Criar Fila'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -348,15 +378,11 @@ class _QueueCreatePageState extends State<QueueCreatePage> {
           children: [
             TextField(
               controller: nameController,
-              decoration: InputDecoration(labelText: 'Name'),
-            ),
-            TextField(
-              controller: deviceController,
-              decoration: InputDecoration(labelText: 'Device'),
+              decoration: InputDecoration(labelText: 'Nome'),
             ),
             TextField(
               controller: adminEmailController,
-              decoration: InputDecoration(labelText: 'Admin Emails'),
+              decoration: InputDecoration(labelText: 'Emails dos admins'),
             ),
             SizedBox(height: 16),
             ElevatedButton(
@@ -365,7 +391,7 @@ class _QueueCreatePageState extends State<QueueCreatePage> {
                 Queue newQueue = Queue(
                   name: nameController.text,
                   id: nameController.text.removeAllWhitespace,
-                  device: deviceController.text,
+                  device: "none",
                   adminEmail: adminEmailController.text,
                 );
                 _saveQueueInfo(newQueue.device, newQueue.name, newQueue.adminEmail, newQueue);
@@ -373,6 +399,169 @@ class _QueueCreatePageState extends State<QueueCreatePage> {
               child: Text('Create Queue'),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class QueueAnimationPage extends StatefulWidget {
+  final Queue queue;
+
+  QueueAnimationPage({required this.queue});
+
+  @override
+  _QueueAnimationPageState createState() => _QueueAnimationPageState();
+}
+class _QueueAnimationPageState extends State<QueueAnimationPage> {
+  late TextEditingController nameController;
+  late TextEditingController deviceController;
+  late TextEditingController adminEmailController;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController(text: widget.queue.name);
+    deviceController = TextEditingController(text: widget.queue.device);
+    adminEmailController = TextEditingController(text: widget.queue.adminEmail);
+  }
+
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  String capitalize(String original) {
+    return " ${original[0].toUpperCase()}${original.substring(1).toLowerCase()}";
+  }
+
+  List<String> animationOptions = [
+    "default","instantaneous","bounce","slide","grow","fast","elastic","slow","preview","vertical","inverted vertical","backwards"
+  ];
+  List<DropdownMenuItem<String>> animationOptionItems = <DropdownMenuItem<String>>[];
+
+
+
+  String _dropdownValue = "default";
+  Widget _buildTextField(String label, String hint, Function(String) onChanged) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        width: 400,
+        child: TextField(
+          decoration: InputDecoration(
+            labelText: label,
+            hintText: hint,
+          ),
+          onChanged: onChanged,
+        ),
+      ),
+    );
+  }
+  String timeOnScreen = "5";
+  String entryEffect = "";
+  String exitEffect = "";
+
+
+  void updateQueueConfiguration(String entryEffect, int screenTime, bool effectUnspecified, bool STUnspecified, String qname) async{
+    print('asjufsadgfuiadewsgfbiuerguierguiergfiuer');
+
+    var c = await firestore.collection('queue').where('name',isEqualTo: qname).get();
+    print('asjufsadgfuiadewsgfbiuerguierguiergfiuer');
+
+    var newQueueDocRef = c.docs[0].reference;
+    print('asjufsadgfuiadewsgfbiuerguierguiergfiuer');
+
+
+    if(effectUnspecified && STUnspecified){print('a');return;}
+
+    if(effectUnspecified){print('b');newQueueDocRef.update({
+      'screenTime': screenTime,
+    });
+      ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Animação atualizada com sucesso!'),
+      ),
+    );
+      return;}
+
+    if(STUnspecified){print('c');newQueueDocRef.update({
+      'entryEffect': entryEffect
+    });ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Animação atualizada com sucesso!'),
+      ),
+    );return;}
+    print('d');
+    newQueueDocRef.update({
+      'screenTime': screenTime,
+      'entryEffect': entryEffect
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Animação atualizada com sucesso!'),
+      ),
+    );
+  }
+
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    animationOptionItems = <DropdownMenuItem<String>>[];
+    animationOptions.forEach((element) {animationOptionItems.add(DropdownMenuItem(child: Text(capitalize(element)),value:element)); });
+    return Scaffold(
+      resizeToAvoidBottomInset : false,
+      appBar: AppBar(
+        title: Text('Modificar Animações da Fila'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildTextField("Tempo em que cada imagem fica na tela", "Escreva em segundos:", (value) {
+                  timeOnScreen = value;
+                }),
+                SizedBox(height: 5,),
+                Row(
+                  children: [
+                    Text("Escolha Nova Animação:  "),
+                    DropdownButton( items: animationOptionItems, value: _dropdownValue, onChanged: (String? value) {if(value is String){
+                      print(value);entryEffect = value; setState(() {
+                        _dropdownValue = value;
+                      }); print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+                    }}),
+                  ],
+                ),
+                Text("Animações determinam a forma como imagens são exibidas durante o playback das filas.",style: TextStyle(color:Colors.black45, fontSize: 11),)
+              ],
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+                bool effectUnspecified = (entryEffect == null || entryEffect.removeAllWhitespace == "");
+                bool STUnspecified = (timeOnScreen == null || int.parse(timeOnScreen) < 1);
+
+                print(effectUnspecified);
+                print(STUnspecified);
+                print('sssssssssssssssssssssssssssssssssssssssssa');
+
+                // Perform any logic with the entered data
+                print("Time On Screen: $timeOnScreen");
+                print("Entry Effect: $entryEffect");
+
+                updateQueueConfiguration(entryEffect, int.parse(timeOnScreen), effectUnspecified, STUnspecified, widget.queue.name);
+              },
+              child: Text('Salvar Mudanças'),
+            ),
+            //_buildTextField("Entry Effect", "Enter entry effect", (value) {
+            //  entryEffect = value;
+            //}),
+          ],
+
         ),
       ),
     );
