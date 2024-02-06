@@ -112,8 +112,8 @@ class _AdminPageState extends State<AdminPage> {
                     labelText: 'Input the super admin´s email',
                   ),)),
                   Container(height:15),
-                  ElevatedButton(onPressed: ()=>saveToDatabase(), child: Container(width:170,child: Center(child: Text("Add to Admin List")))),
-                  ElevatedButton(onPressed: ()=>removeFromDatabase(), child: Container(width:170, child: Center(child: Text("Remove from Admin List"))))
+                  ElevatedButton(onPressed: ()=>saveToDatabase(), child: Container(width:200,child: Center(child: Text("Add to Super Admin List")))),
+                  ElevatedButton(onPressed: ()=>removeFromDatabase(), child: Container(width:200, child: Center(child: Text("Remove from Super Admin List"))))
                 ],
               ),
       ));

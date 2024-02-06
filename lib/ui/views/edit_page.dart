@@ -219,53 +219,43 @@ class _EditPageState extends State<EditPage> {
 
   bool gotImages = false;
 
-  Future<void> _showConfigDialog(BuildContext context, String image) async {
+  Future<void> _showConfigDialog(BuildContext context, String image, String qname) async {
+    print('jgeacgbtgbvcreugervw iuertvg iregv');
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Image Settings"),
+          scrollable: true,
+          title: Text("Deletar Imagem?"),
           content: SingleChildScrollView(
+
             child: Column(
               children: [
-                _buildTextField("Time on Screen", "Enter time", (value) {
-                  timeOnScreen = value;
-                }),
-                _buildTextField("Entry Effect", "Enter entry effect", (value) {
-                  entryEffect = value;
-                }),
+               Text("Não é possível recuperar uma imagem deletada.")
               ],
             ),
           ),
           actions: [
             TextButton(
               onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Não"),),
+            TextButton(
+              onPressed: () {
                 deleteImage(image);
                 Navigator.of(context).pop();
               },
-              child: Text("Delete Image"),
+              child: Text("Sim"),
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                // Perform any logic with the entered data
-                print("Time On Screen: $timeOnScreen");
-                print("Entry Effect: $entryEffect");
 
-                Navigator.of(context).pop();
-              },
-              child: Text("Save"),
-            ),
+
           ],
         );
       },
     );
   }
+
 
   void deleteImage(String image) async{
     isLoading = true;
@@ -343,9 +333,12 @@ class _EditPageState extends State<EditPage> {
     if(present){return " added to queue.";}
     return " removed from queue.";
   }
+
   @override
   Widget build(BuildContext context) {
+    print('erghgiredgdhrfg');
     if(!gotImages){getRequestedTiles();gotImages=true;}
+    print('j');
     return Scaffold(
       appBar: AppBar(toolbarHeight: 50, title: Text("Edit Queue: "+Get.arguments[0]), centerTitle: false,leading: IconButton(onPressed: ()=> goBack(), icon: Icon(Icons.arrow_back)),),
       backgroundColor: Colors.white,
@@ -372,11 +365,11 @@ class _EditPageState extends State<EditPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.fromLTRB(0,0,4,0),
+                                  padding: const EdgeInsets.fromLTRB(0,0,14,0),
                                   child: Text((i+1).toString()),
                                 ),
-                                Container(width:40,child: IconButton(onPressed: ()=>{_showConfigDialog(context,myTiles[i])}, icon: Icon(Icons.settings))),
-                                Container(width:36,child: Checkbox(key: ValueKey(present[i]) ,value: present[i], onChanged: (bool? value) {setState(() {present[i] = !present[i];}); addImageToQueue(myTiles[i], i, present[i]); },)),
+                                Container(width:20,child: Checkbox(key: ValueKey(present[i]) ,value: present[i], onChanged: (bool? value) {setState(() {present[i] = !present[i];}); addImageToQueue(myTiles[i], i, present[i]); },)),
+                                Container(width:20,child: IconButton(onPressed: ()=>{_showConfigDialog(context,myTiles[i], Get.arguments[0])}, icon: Icon(Icons.delete))),
                               ],
                             )
                             ),
@@ -396,7 +389,7 @@ class _EditPageState extends State<EditPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.add),
-                  Text("Add new Image"),
+                  printWidget(),
                 ],
               ),style:ElevatedButton.styleFrom(primary: Colors.blueGrey)),
             ),
@@ -407,6 +400,8 @@ class _EditPageState extends State<EditPage> {
     );
   }
 }
-
+int i = 0;
+Widget printWidget(){print('got here'); print(i++);return Text("Add new Image");}
+Widget printWidget2(){print('got here'); print(i++);return Text("");}
 
 
