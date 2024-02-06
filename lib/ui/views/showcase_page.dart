@@ -130,7 +130,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
 
   dynamic tempImages;
   int queueScreenTime = 8;
-  int getTimeForImage(int index){return 4;}//queueScreenTime;}
+  int getTimeForImage(int index){return queueScreenTime;}
 
 
 
