@@ -60,7 +60,7 @@ class _NotificationPageState extends State<NotificationPage> {
     //String queueId ="";
     //var c = await firestore.collection('queue').where('name',isEqualTo: oldName).get();
     //queueId = c.docs[0].id;
-    Get.offAndToNamed(Routes.EDIT,arguments: [oldName,false]);
+    Get.offAndToNamed(Routes.EDIT,arguments: [oldName,true]);
 
   }
 

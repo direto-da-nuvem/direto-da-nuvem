@@ -31,11 +31,11 @@ class _DashboardPageState extends State<DashboardPage> {
   void getDeviceQueue() async{
     gotQueue = true;
     String correctQueue = await getFirstQueueMappedToDevice();
-    print(correctQueue);
+    //print(correctQueue);
     //dynamic requests = await storage.ref().child("queue_devices.txt").getData();
     selectedQueue = correctQueue;//queueDeviceFromString("MeuDispositivo",utf8.decode(requests));
     finishedGettingQueue = true;
-    print(deviceName);
+    //print(deviceName);
     setState(() {});
   }
 
@@ -53,12 +53,12 @@ class _DashboardPageState extends State<DashboardPage> {
   void checkIfAdmin(String userEmail) async{
     //loadDeviceInfo();
     isLoading = true;
-    print('Elements');
+    //print('Elements');
 
     dynamic admins = await storage.ref().child("admin_emails.txt").getData();
 
     //deviceId = await D.getDeviceId().toString();
-    print('Elements');
+    //print('Elements');
 
     String sAdmins = utf8.decode(admins);
     List<String> files = sAdmins.toString().split('\n');
@@ -107,14 +107,13 @@ class _DashboardPageState extends State<DashboardPage> {
     var mappedQueueId;
     var mappedQueue;
     print(dId);
-    print('Got here!');
+    print('Got here');
     await c.get().then(
             (DocumentSnapshot doc) {
           final dataa = doc.data() as Map<String, dynamic>;
           mappedQueueId = dataa['queue']; print(mappedQueueId); print(dataa['queue']);
           deviceName = dataa['name'];
         });
-    print('fasfd');
     print(mappedQueueId);
     c = await firestore.collection('queue').doc(mappedQueueId);
     await c.get().then(
@@ -234,8 +233,6 @@ class _DashboardPageState extends State<DashboardPage> {
     if(!gotQueue){
       getDeviceQueue();
     }
-    print(isLoading);
-    print(finishedGettingQueue);
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
