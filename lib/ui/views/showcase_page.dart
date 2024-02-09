@@ -46,7 +46,8 @@ class _ShowcasePageState extends State<ShowcasePage> {
   bool instQueue = false;
   Future<void> getImageData() async {
     if(currentQueueFile=="InstallationQueue_Requests.txt"){instQueue = true;
-    RequestedImages = ["1.png","2.png","3.png","4.png"]; //This probably shouldn´t be hardcoded.
+      if(Get.arguments[2]){RequestedImages = ["5.png"];}else{
+    RequestedImages = ["1.png","2.png","3.png","4.png"];} //This probably shouldn´t be hardcoded.
     //TO-DO: Edit above structures
 }
     else{
@@ -93,7 +94,15 @@ class _ShowcasePageState extends State<ShowcasePage> {
       if(!signedIn){Get.offAndToNamed(Routes.LOGIN, arguments: true);}
       else{Get.offAndToNamed(Routes.DASHBOARD, arguments: currentQueueFile);}
     }
-    else{Get.offAndToNamed(Routes.LOGIN, arguments: false);}
+    else{
+      if(!Get.arguments[2]){
+        print('gothere');
+        Get.offAndToNamed(Routes.SHOWCASE, arguments: ["InstallationQueue",false, true]);
+      }else{
+      print('n');
+
+      Get.offAndToNamed(Routes.LOGIN, arguments: false);}
+    }
   }
 
   void finishedLoading(){setState(() {
@@ -129,7 +138,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   Axis scrollDirection = Axis.horizontal;
 
   dynamic tempImages;
-  int queueScreenTime = 8;
+  int queueScreenTime = 15;
   int getTimeForImage(int index){return queueScreenTime;}
 
 

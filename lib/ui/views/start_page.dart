@@ -32,7 +32,7 @@ class _StartPageState extends State<StartPage> {
     deviceConfigured = await isConfigured();
     if(!deviceConfigured){
       Future.delayed(Duration.zero, () async {
-        Get.offAndToNamed(Routes.SHOWCASE, arguments: ["InstallationQueue",false]);
+        Get.offAndToNamed(Routes.SHOWCASE, arguments: ["InstallationQueue",false, false]);
       });}
     else{
       Future.delayed(Duration.zero, () async {

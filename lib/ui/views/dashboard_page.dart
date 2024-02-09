@@ -141,7 +141,7 @@ class _DashboardPageState extends State<DashboardPage> {
     Get.offAndToNamed(Routes.QUEUE);
   }
   void view_images(){
-    Get.offAndToNamed(Routes.SHOWCASE,arguments: [selectedQueue,true]);
+    Get.offAndToNamed(Routes.SHOWCASE,arguments: [selectedQueue,true, false]);
   }
   void manage_admin_list(){
     Get.offAndToNamed(Routes.ADMIN);

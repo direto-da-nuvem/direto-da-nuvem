@@ -234,7 +234,6 @@ class _QueueEditPageState extends State<QueueEditPage> {
                   onPressed: () {
                     // Save the changes and pop the page
                     _dropdownValue;
-                    widget.queue.adminEmail = adminEmailController.text;
                     _saveQueueInfo(_dropdownValue,nameController.text, widget.queue.name, widget.queue.monitored );
                   },
                   child: Text('Salvar Mudanças'),
