@@ -220,7 +220,6 @@ class _EditPageState extends State<EditPage> {
   bool gotImages = false;
 
   Future<void> _showConfigDialog(BuildContext context, String image, String qname) async {
-    print('jgeacgbtgbvcreugervw iuertvg iregv');
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -338,9 +337,7 @@ class _EditPageState extends State<EditPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('erghgiredgdhrfg');
     if(!gotImages){getRequestedTiles();gotImages=true;}
-    print('j');
     return Scaffold(
       appBar: AppBar(toolbarHeight: 50, title: Text("Edit Queue: "+Get.arguments[0]), centerTitle: false,leading: IconButton(onPressed: ()=> goBack(), icon: Icon(Icons.arrow_back)),),
       backgroundColor: Colors.white,

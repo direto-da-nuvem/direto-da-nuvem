@@ -248,14 +248,6 @@ class _QueueEditPageState extends State<QueueEditPage> {
                   },
                   child: Text('Editar Imagens da Fila'),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Save the changes and pop the page
-                    queueLoaded = false;
-                    Get.offAndToNamed(Routes.EDIT,arguments: [widget.queue.id,false]);
-                  },
-                  child: Text('Gerenciar admins da Fila'),
-                ),
                 SizedBox(width: 12,),
                 ElevatedButton(
                   onPressed: () {
@@ -269,6 +261,21 @@ class _QueueEditPageState extends State<QueueEditPage> {
                   },
                   child: Text('Editar Animações da Fila'),
                 ),
+                SizedBox(width: 12,),
+
+                ElevatedButton(
+                  onPressed: () {
+                    // Save the changes and pop the page
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                    builder: (context) => QueueAdminsPage(queue: widget.queue),
+                    ),
+                    );
+                  },
+                  child: Text('Gerenciar admins da Fila'),
+                ),
+
               ],
             ),
           ],
@@ -278,13 +285,11 @@ class _QueueEditPageState extends State<QueueEditPage> {
   }
   void _saveQueueInfo(String? deviceIdChosen,  String qname, String oldName, bool monitored) async {
     if (qname.isNotEmpty) {
-      print('AAAAAAAAAAAAA');
       // Access Firestore instance
       FirebaseFirestore firestore = FirebaseFirestore.instance;
       if(deviceIdChosen == null || deviceIdChosen.removeAllWhitespace == ""){deviceIdChosen = "none";}
       // Add device information to Firestore
 
-      print('CCCCCCCCCCCCCCCCCCCCCCCCCCC');
 
       var c = await firestore.collection('queue').where('name',isEqualTo: oldName).get();
       var newQueueDocRef = c.docs[0].reference;
@@ -292,7 +297,6 @@ class _QueueEditPageState extends State<QueueEditPage> {
       String qId = c.docs[0].id;
       //code here that will update admins of queue
 
-      print('BBBBBBBBBBBBBBBB');
 
       if(deviceIdChosen.toLowerCase() != "none"){
         String deviceId = deviceIdFromName(deviceIdChosen);
@@ -511,18 +515,14 @@ class _QueueAnimationPageState extends State<QueueAnimationPage> {
 
 
   void updateQueueConfiguration(String entryEffect, int screenTime, bool effectUnspecified, bool STUnspecified, String qname) async{
-    print('asjufsadgfuiadewsgfbiuerguierguiergfiuer');
 
     var c = await firestore.collection('queue').where('name',isEqualTo: qname).get();
-    print('asjufsadgfuiadewsgfbiuerguierguiergfiuer');
-
     var newQueueDocRef = c.docs[0].reference;
-    print('asjufsadgfuiadewsgfbiuerguierguiergfiuer');
 
 
-    if(effectUnspecified && STUnspecified){print('a');return;}
+    if(effectUnspecified && STUnspecified){return;}
 
-    if(effectUnspecified){print('b');newQueueDocRef.update({
+    if(effectUnspecified){newQueueDocRef.update({
       'screenTime': screenTime,
     });
       ScaffoldMessenger.of(context).showSnackBar(
@@ -532,14 +532,13 @@ class _QueueAnimationPageState extends State<QueueAnimationPage> {
     );
       return;}
 
-    if(STUnspecified){print('c');newQueueDocRef.update({
+    if(STUnspecified){newQueueDocRef.update({
       'entryEffect': entryEffect
     });ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Animação atualizada com sucesso!'),
       ),
     );return;}
-    print('d');
     newQueueDocRef.update({
       'screenTime': screenTime,
       'entryEffect': entryEffect
@@ -597,7 +596,158 @@ class _QueueAnimationPageState extends State<QueueAnimationPage> {
 
                 print(effectUnspecified);
                 print(STUnspecified);
-                print('sssssssssssssssssssssssssssssssssssssssssa');
+
+                // Perform any logic with the entered data
+                print("Time On Screen: $timeOnScreen");
+                print("Entry Effect: $entryEffect");
+
+                updateQueueConfiguration(entryEffect, int.parse(timeOnScreen), effectUnspecified, STUnspecified, widget.queue.name);
+              },
+              child: Text('Salvar Mudanças'),
+            ),
+            //_buildTextField("Entry Effect", "Enter entry effect", (value) {
+            //  entryEffect = value;
+            //}),
+          ],
+
+        ),
+      ),
+    );
+  }
+}
+
+class QueueAdminsPage extends StatefulWidget {
+  final Queue queue;
+
+  QueueAdminsPage({required this.queue});
+
+  @override
+  _QueueAdminsPageState createState() => _QueueAdminsPageState();
+}
+class _QueueAdminsPageState extends State<QueueAdminsPage> {
+  late TextEditingController nameController;
+  late TextEditingController deviceController;
+  late TextEditingController adminEmailController;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController(text: widget.queue.name);
+    adminEmailController = TextEditingController(text: widget.queue.adminEmail);
+  }
+
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  String capitalize(String original) {
+    return " ${original[0].toUpperCase()}${original.substring(1).toLowerCase()}";
+  }
+
+  List<String> animationOptions = [
+    "default","instantaneous","bounce","slide","grow","fast","elastic","slow","preview","vertical","inverted vertical","backwards"
+  ];
+  List<DropdownMenuItem<String>> animationOptionItems = <DropdownMenuItem<String>>[];
+
+
+
+  String _dropdownValue = "default";
+  Widget _buildTextField(String label, String hint, Function(String) onChanged) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        width: 400,
+        child: TextField(
+          decoration: InputDecoration(
+            labelText: label,
+            hintText: hint,
+          ),
+          onChanged: onChanged,
+        ),
+      ),
+    );
+  }
+  String timeOnScreen = "5";
+  String entryEffect = "";
+  String exitEffect = "";
+
+
+  void updateQueueConfiguration(String entryEffect, int screenTime, bool effectUnspecified, bool STUnspecified, String qname) async{
+    var c = await firestore.collection('queue').where('name',isEqualTo: qname).get();
+    var newQueueDocRef = c.docs[0].reference;
+
+    if(effectUnspecified && STUnspecified){print('');return;}
+
+    if(effectUnspecified){print('');newQueueDocRef.update({
+      'screenTime': screenTime,
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Animação atualizada com sucesso!'),
+      ),
+    );
+    return;}
+
+    if(STUnspecified){newQueueDocRef.update({
+      'entryEffect': entryEffect
+    });ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Animação atualizada com sucesso!'),
+      ),
+    );return;}
+    newQueueDocRef.update({
+      'screenTime': screenTime,
+      'entryEffect': entryEffect
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Animação atualizada com sucesso!'),
+      ),
+    );
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    animationOptionItems = <DropdownMenuItem<String>>[];
+    animationOptions.forEach((element) {animationOptionItems.add(DropdownMenuItem(child: Text(capitalize(element)),value:element)); });
+    return Scaffold(
+      resizeToAvoidBottomInset : false,
+      appBar: AppBar(
+        title: Text('Modificar Admins da Fila'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildTextField("Tempo em que cada imagem fica na tela", "Escreva em segundos:", (value) {
+                  timeOnScreen = value;
+                }),
+                SizedBox(height: 5,),
+                Row(
+                  children: [
+                    Text("Escolha Nova Animação:  "),
+                    DropdownButton( items: animationOptionItems, value: _dropdownValue, onChanged: (String? value) {if(value is String){
+                      print(value);entryEffect = value; setState(() {
+                        _dropdownValue = value;
+                      }); print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+                    }}),
+                  ],
+                ),
+                Text("Animações determinam a forma como imagens são exibidas durante o playback das filas.",style: TextStyle(color:Colors.black45, fontSize: 11),)
+              ],
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+                bool effectUnspecified = (entryEffect == null || entryEffect.removeAllWhitespace == "");
+                bool STUnspecified = (timeOnScreen == null || int.parse(timeOnScreen) < 1);
+
+                print(effectUnspecified);
+                print(STUnspecified);
 
                 // Perform any logic with the entered data
                 print("Time On Screen: $timeOnScreen");
