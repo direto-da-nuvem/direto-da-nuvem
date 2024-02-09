@@ -52,7 +52,7 @@ class _DeviceInfoPageState extends State<DeviceInfoPage> {
       // Add device information to Firestore
       DocumentReference newQueueDocRef = await firestore.collection('devices').add({
         'name': deviceName,
-        'queue': '8AKvDCetBMYBxKPcKJCb',
+        'queue': '8AKvDCetBMYBxKPcKJCb', //fila default
         'timestamp': tstamp,
         'location': deviceLocation,
         'serial': deviceSerial //fix this later

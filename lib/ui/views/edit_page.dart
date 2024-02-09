@@ -319,6 +319,7 @@ class _EditPageState extends State<EditPage> {
       'present': present
     });
 
+    if( c.docs[0].data()['monitored']){
     String message = "[" + Get.arguments[0] + "]: " + "Image " + image + generateMessageSuffix(present);
     var j = await firestore.collection('messages').add({
       'message': message,
@@ -327,11 +328,12 @@ class _EditPageState extends State<EditPage> {
       'queue': Get.arguments[0],
       'read': false
     });
+    }
   }
 
   String generateMessageSuffix(bool present){
-    if(present){return " added to queue.";}
-    return " removed from queue.";
+    if(present){return " adicionada a fila.";}
+    return " removida da fila.";
   }
 
   @override
