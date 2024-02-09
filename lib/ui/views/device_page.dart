@@ -35,6 +35,8 @@ class _DeviceInfoPageState extends State<DeviceInfoPage> {
     return deviceInfo.serialNumber.toString();
   }
 
+  //TO-DO: Incluir 5a imagem com o texto "Bem vindo ao Direto da UFF!", "Para finalizar a instalação, é nescessário dar permissão de overlay para este aplicativo. Você pode encontrar esta opção no menu do sistema operacional." ou algo assim sla
+
   void _saveDeviceInfo() async {
     String deviceName = _deviceNameController.text;
     String deviceLocation = _deviceLocationController.text;

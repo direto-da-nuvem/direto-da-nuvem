@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
   void playQueue() async{
     startedTimer = false;
     String currentQueue = await getDeviceQueue();
-    Get.offAndToNamed(Routes.SHOWCASE, arguments: [currentQueue,false]);
+    Get.offAndToNamed(Routes.SHOWCASE, arguments: [currentQueue,false,false]);
   }
 
   Future<String> getDeviceQueue() async{
