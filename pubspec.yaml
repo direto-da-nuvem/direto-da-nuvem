@@ -51,6 +51,7 @@ dependencies:
   device_info_plus: any
   image_picker: any
   shared_preferences: any
+  intl: any
 flutter_launcher_icons:
   image_path: "assets/logo4.png"
   ios: true

@@ -154,17 +154,14 @@ class _DashboardPageState extends State<DashboardPage> {
 
   List<Widget> buttonsFromAdminStatus(bool admin){
     List<Widget> children = <Widget>[];
-    children.add(ElevatedButton(onPressed: () => view_images(), child: Text('Play Queue')));
+    children.add(ElevatedButton(onPressed: () => view_images(), child: Text('Tocar fila')));
     if(admin){
-      Widget queueButton = ElevatedButton(onPressed: () => edit_queues(), child: Text('Manage Queues'));
+      Widget queueButton = ElevatedButton(onPressed: () => edit_queues(), child: Text('Gerenciar filas'));
       children.add(Container(width: 10,));
       children.add(queueButton);
 
-      Widget editB = ElevatedButton(onPressed: () => edit_images(), child: Text('Edit Images'));
-      children.add(Container(width: 10,));
-      children.add(editB);
 
-      Widget adminButton = ElevatedButton(onPressed: () => manage_admin_list(), child: Text('Manage Super Admins'));
+      Widget adminButton = ElevatedButton(onPressed: () => manage_admin_list(), child: Text('Gerenciar Super Admins'));
       children.add(Container(width: 10,));
       children.add(adminButton);
 
@@ -196,7 +193,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   gotAuthData = true;}
                 checkIfAdmin(currentAuth.currentUser!.email!);
                 return Scaffold(
-                    appBar: AppBar(title: Text('Direto Da Uff')),
+                    appBar: AppBar(title: Text('Direto da UFF')),
                     body: (!isLoading)? Column(
                       children: [
                         Text(''),
@@ -218,7 +215,7 @@ class _DashboardPageState extends State<DashboardPage> {
           );
         }
     );
-  }
+  } //widget temporario que carrega emquanto busca dados
 
 
   bool created = false;
@@ -243,36 +240,46 @@ class _DashboardPageState extends State<DashboardPage> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title:
-          Text("Direto Da Uff"),
+          Text("Direto da UFF"),
           centerTitle: false,
         ),
         body: (!isLoading && finishedGettingQueue)?
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.fromLTRB(16, 7, 12, 16),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  IconButton(onPressed: (){acessNotifications();}, icon: Icon(Icons.notifications))
-                ],
-              ),
-              Column(
-                children: [
-                  Text('Current User:   ' + currentAuth.currentUser!.displayName!),
-                  Text('Current Email:   ' + currentAuth.currentUser!.email! + adminSuffix(admin)),
-                  Text('Device: ' + StringNotNull(deviceName) + ' -- Selected Queue: ' + selectedQueue),
-                  Text(''),
-                  Text(''),
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Row(
-                      children: buttonsFromAdminStatus(admin),
-                    ),
+                  Column(
+                    children: [
+                      SizedBox(height: 16,),
+                      Text('Usuário atual:  ' + currentAuth.currentUser!.displayName! + adminSuffix(admin)),
+                      Text('Dispositivo: ' + StringNotNull(deviceName)),
+                       Text("Fila: " + selectedQueue),
+                      Text(''),
+                      Text(''),
+                      Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Row(
+                          children: buttonsFromAdminStatus(admin),
+                        ),
+                      )
+                    ],
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                  ),
+                  Column(
+                    children: [
+                      IconButton(onPressed: (){acessNotifications();}, icon: Icon(Icons.notifications)),
+                      Text("Notificações",style: TextStyle(color:Colors.black45, fontSize: 10),),
+
+                    ],
                   )
                 ],
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
               ),
             ],
           ),
