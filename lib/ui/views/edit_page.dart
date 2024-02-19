@@ -255,7 +255,6 @@ class _EditPageState extends State<EditPage> {
     );
   }
 
-
   void deleteImage(String image) async{
     isLoading = true;
     if(await imageInQueue(image)){

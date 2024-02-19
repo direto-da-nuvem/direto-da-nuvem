@@ -96,11 +96,8 @@ class _ShowcasePageState extends State<ShowcasePage> {
     }
     else{
       if(!Get.arguments[2]){
-        print('gothere');
         Get.offAndToNamed(Routes.SHOWCASE, arguments: ["InstallationQueue",false, true]);
       }else{
-      print('n');
-
       Get.offAndToNamed(Routes.LOGIN, arguments: false);}
     }
   }

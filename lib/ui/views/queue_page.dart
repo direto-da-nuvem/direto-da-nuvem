@@ -40,33 +40,53 @@ class _QueueListPageState extends State<QueueListPage> {
   List<String> deviceIds = <String>[];
   List<String> deviceNames = <String>[];
   List<String> devices = <String>[];
+  bool isAdmin = false;
 
   void getQueueData() async{
-
     //dynamic requests = await storage.ref().child("queue_data.txt").getData();;//queuesFromString(utf8.decode(requests));
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     var c = await firestore.collection('queue').get();
+    bool universalAdmin = Get.arguments[0];
+    isAdmin = universalAdmin;
+    String userEmail = Get.arguments[1];
+    print(userEmail);
+    print(userEmail);
+    print(userEmail);
+    print(userEmail);
+    print(userEmail);
+    print(userEmail);
+    print(userEmail);
+    print(userEmail);
+    print(userEmail);
+    print(userEmail);
+    print(userEmail);
     for(int i =0; i<c.docs.length;i++){
       Queue q = Queue(name: c.docs[i].data()['name'], id: c.docs[i].data()['name'].toString().removeAllWhitespace, adminEmail: c.docs[i].data()['admin'], monitored:  c.docs[i].data()['monitored']);
-      queues.add(q);
-      print(q.toString());
-    }
+      print(userEmail);
+      print(userEmail);
+      print(userEmail);
+      print(userEmail == c.docs[i].data()['email']);
+      var v = await c.docs[i].reference.collection('admins').where('email',isEqualTo: userEmail).get();
 
 
-
+      if(universalAdmin ||v.docs.length>0){
+      queues.add(q);}
+      print(q.toString());}
 
     var d = await firestore.collection('devices').get();
-    for(int i =0; i<c.docs.length;i++){
+    for(int i =0; i<d.docs.length;i++){
        String dId = d.docs[i].data()['serial'];
        devices.add(dId);
        deviceIds.add(dId);
        deviceNames.add(d.docs[i].data()['name']);
+       print('bbbbbbbbb');
+       print(c.docs.length);
+       print(deviceNames);
     }
 
     queueLoaded = true;
     queueLoading = false;
     if(triedOnce && queues.length>0){triedOnce=false;}
-
     setState(() {});
   }
 
@@ -74,18 +94,18 @@ class _QueueListPageState extends State<QueueListPage> {
 
   bool queueLoading = false;
   bool triedOnce = false;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  String getDevString( Queue q){
+  String getDevString( Queue q) {
     return "TBD";
-    List<String> allDevices = <String>[];
-    //code to scrape data goes here eventually
-    String ans = "";
-    int len = min(5, allDevices.length);
-    for(int i = 0; i<len; i++)
-      ans += allDevices[i] + ", ";
-    if(allDevices.length < 5){ans.trimRight();ans.trimRight();int remaining = allDevices.length - 5; ans += " " + "+" + remaining.toString() + " more.";}
-    return ans;
+   // var c = await firestore.collection('queue').get();
+   // for(int i =0; i<c.docs.length;i++){
+   //   var newQueueDocRef = c.docs[i].reference;
+   //   var c2 = await newQueueDocRef.collection('images').where('imagePath',isEqualTo: "a").get();
+   //   if(c2.docs.length>0){return "a";}
+   // }
   }
+
   @override
   Widget build(BuildContext context) {
     print('m ' + queueLoaded.toString());
@@ -94,7 +114,7 @@ class _QueueListPageState extends State<QueueListPage> {
       queueLoading = true;
       getQueueData();
     }
-    else if(!triedOnce && queues.length==0){
+    else if(!triedOnce && queues.length==0 && Get.arguments[0]){
       getQueueData();
     }
     return queueLoaded? Scaffold(
@@ -117,7 +137,7 @@ class _QueueListPageState extends State<QueueListPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => QueueEditPage(queue: queues[index],deviceIds: deviceIds, deviceNames: deviceNames,),
+                        builder: (context) => QueueEditPage(queue: queues[index],deviceIds: deviceIds, deviceNames: deviceNames,isAdmin: isAdmin,),
                       ),
                     );
                   },
@@ -155,8 +175,9 @@ class QueueEditPage extends StatefulWidget {
   final Queue queue;
   final List<String> deviceNames;
   final List<String> deviceIds;
+  final bool isAdmin;
 
-  QueueEditPage({required this.queue, required this.deviceNames, required this.deviceIds});
+  QueueEditPage({required this.queue, required this.deviceNames, required this.deviceIds, required this.isAdmin});
 
   @override
   _QueueEditPageState createState() => _QueueEditPageState();
@@ -180,6 +201,19 @@ class _QueueEditPageState extends State<QueueEditPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.isAdmin);
+    print(widget.isAdmin);
+    print(widget.isAdmin);
+    print(widget.isAdmin);
+    print(widget.isAdmin);
+    print(widget.isAdmin);
+    print(widget.isAdmin);
+    print(widget.isAdmin);
+    print(widget.isAdmin);
+    print(widget.isAdmin);
+    print(widget.isAdmin);
+    print(widget.isAdmin);
+    print(widget.isAdmin);
     if(_dropdownValue =="")
     {
       getStartingValues();
@@ -262,7 +296,7 @@ class _QueueEditPageState extends State<QueueEditPage> {
                 ),
                 SizedBox(width: 12,),
 
-                ElevatedButton(
+              getWidget( widget.isAdmin, ElevatedButton(
                   onPressed: () {
                     // Save the changes and pop the page
                     Navigator.push(
@@ -273,7 +307,7 @@ class _QueueEditPageState extends State<QueueEditPage> {
                     );
                   },
                   child: Text('Gerenciar admins da Fila'),
-                ),
+                ),)
 
               ],
             ),
@@ -282,6 +316,9 @@ class _QueueEditPageState extends State<QueueEditPage> {
       ),
     );
   }
+
+  Widget getWidget(bool b, Widget w){if(b){return w;}return SizedBox();}
+
   void _saveQueueInfo(String? deviceIdChosen,  String qname, String oldName, bool monitored) async {
     if (qname.isNotEmpty) {
       // Access Firestore instance
@@ -668,38 +705,49 @@ class _QueueAdminsPageState extends State<QueueAdminsPage> {
   String exitEffect = "";
 
 
-  void updateQueueConfiguration(String entryEffect, int screenTime, bool effectUnspecified, bool STUnspecified, String qname) async{
+  void addAdminToQueue( bool emailUnspecified, String qname, String email) async{
     var c = await firestore.collection('queue').where('name',isEqualTo: qname).get();
     var newQueueDocRef = c.docs[0].reference;
 
-    if(effectUnspecified && STUnspecified){print('');return;}
-
-    if(effectUnspecified){print('');newQueueDocRef.update({
-      'screenTime': screenTime,
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
+    if(emailUnspecified){print('');ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Animação atualizada com sucesso!'),
-      ),
-    );
-    return;}
-
-    if(STUnspecified){newQueueDocRef.update({
-      'entryEffect': entryEffect
-    });ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Animação atualizada com sucesso!'),
+        content: Text('Escolha o email do admin primeiro.'),
       ),
     );return;}
-    newQueueDocRef.update({
-      'screenTime': screenTime,
-      'entryEffect': entryEffect
-    });
+
+
+
+    c.docs[0].reference.collection('admins').add({'email':email});
+
+
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Animação atualizada com sucesso!'),
+        content: Text('Admin adicionado com sucesso!'),
       ),
     );
+  }
+  void removeAdminFromQueue( bool emailUnspecified, String qname, String email) async{
+    var c = await firestore.collection('queue').where('name',isEqualTo: qname).get();
+    var newQueueDocRef = c.docs[0].reference;
+
+    if(emailUnspecified){print('');ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Insira o email do email à ser removido da fila.'),
+      ),
+    );return;}
+
+
+    var d = c.docs[0].reference.collection('admins').where('email',isEqualTo: email).get();
+
+
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Erro na remoção de admin, tente denovo novamente.'),
+      ),
+    );
+
   }
 
 
@@ -711,7 +759,7 @@ class _QueueAdminsPageState extends State<QueueAdminsPage> {
     return Scaffold(
       resizeToAvoidBottomInset : false,
       appBar: AppBar(
-        title: Text('Modificar Admins da Fila'),
+        title: Text('Gerenciar Admins da Fila'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -722,40 +770,24 @@ class _QueueAdminsPageState extends State<QueueAdminsPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildTextField("Tempo em que cada imagem fica na tela", "Escreva em segundos:", (value) {
+                _buildTextField("Adicionar ou remover admin", "Escreva email do admin:", (value) {
                   timeOnScreen = value;
                 }),
                 SizedBox(height: 5,),
+                Text("Admins tem o poder de modificar o conteúdo e as politicas de playback das filas.\nCaso queira controlar as modificações feitas pelos admins, marque a fila como moderada na tela anterior.",style: TextStyle(color:Colors.black45, fontSize: 11),),
+                SizedBox(height: 25,),
                 Row(
                   children: [
-                    Text("Escolha Nova Animação:  "),
-                    DropdownButton( items: animationOptionItems, value: _dropdownValue, onChanged: (String? value) {if(value is String){
-                      print(value);entryEffect = value; setState(() {
-                        _dropdownValue = value;
-                      }); print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-                    }}),
+                    SizedBox(width: 0,),
+                    ElevatedButton(onPressed: (){addAdminToQueue(timeOnScreen==null, widget.queue.name, timeOnScreen);}, child: Text("Adicionar")),
+                    SizedBox(width: 10,),
+                    ElevatedButton(onPressed: (){}, child: Text("Remover")),
                   ],
                 ),
-                Text("Animações determinam a forma como imagens são exibidas durante o playback das filas.",style: TextStyle(color:Colors.black45, fontSize: 11),)
+
               ],
             ),
 
-            ElevatedButton(
-              onPressed: () {
-                bool effectUnspecified = (entryEffect == null || entryEffect.removeAllWhitespace == "");
-                bool STUnspecified = (timeOnScreen == null || int.parse(timeOnScreen) < 1);
-
-                print(effectUnspecified);
-                print(STUnspecified);
-
-                // Perform any logic with the entered data
-                print("Time On Screen: $timeOnScreen");
-                print("Entry Effect: $entryEffect");
-
-                updateQueueConfiguration(entryEffect, int.parse(timeOnScreen), effectUnspecified, STUnspecified, widget.queue.name);
-              },
-              child: Text('Salvar Mudanças'),
-            ),
             //_buildTextField("Entry Effect", "Enter entry effect", (value) {
             //  entryEffect = value;
             //}),

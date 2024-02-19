@@ -40,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<String> getDeviceQueue() async{
     dynamic requests = await storage.ref().child("queue_devices.txt").getData();
-    var selectedQueue = 'default';//queueDeviceFromString("MeuDispositivo",utf8.decode(requests));
+    var selectedQueue = 'default'; //queueDeviceFromString("MeuDispositivo",utf8.decode(requests));
     return selectedQueue;
   }
 
