@@ -10,4 +10,5 @@ abstract class Routes {
   static const DEVICES = '/device';
   static const START = '/start';
   static const NOTIFICATIONS = '/notifications';
+  static const ABOUT = '/about';
 }

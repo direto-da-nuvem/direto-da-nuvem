@@ -8,6 +8,7 @@ import 'package:sample/ui/views/admin_page.dart';
 import 'package:sample/ui/views/device_page.dart';
 import 'package:sample/ui/views/start_page.dart';
 import 'package:sample/ui/views/notifications.dart';
+import 'package:sample/ui/views/about.dart';
 
 import '../ui/views/queue_page.dart';
 
@@ -25,6 +26,7 @@ abstract class Pages{
     GetPage(name: Routes.QUEUE, page:() => const QueueListPage()),
     GetPage(name: Routes.START, page:() => const StartPage()),
     GetPage(name: Routes.NOTIFICATIONS, page:() => NotificationPage()),
+    GetPage(name: Routes.ABOUT, page:() => AboutPage()),
 
     //QueueListPage
   ];

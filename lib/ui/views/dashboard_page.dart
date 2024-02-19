@@ -72,6 +72,7 @@ class _DashboardPageState extends State<DashboardPage> {
       }
     }
     print('Elements');
+    userEmailP = userEmail;
     systemAdmins.forEach((element) {print(element);print(element==userEmail);});
     print(userEmail);
     admin = false;
@@ -82,7 +83,7 @@ class _DashboardPageState extends State<DashboardPage> {
     isLoading = false;
     re();
   }
-
+  String userEmailP = "";
   void being_logout(){
     try{
       GoogleSignIn().signOut();
@@ -137,8 +138,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
     Get.offAndToNamed(Routes.EDIT,arguments: [selectedQueue,true]);
   }
-  void edit_queues(){
-    Get.offAndToNamed(Routes.QUEUE);
+  void edit_queues(bool admin, String userEmail){
+    Get.offAndToNamed(Routes.QUEUE, arguments: [admin,userEmail]);
   }
   void view_images(){
     Get.offAndToNamed(Routes.SHOWCASE,arguments: [selectedQueue,true, false]);
@@ -149,15 +150,18 @@ class _DashboardPageState extends State<DashboardPage> {
 
   void acessNotifications(){
     Get.offAndToNamed(Routes.NOTIFICATIONS, arguments: [selectedQueue,true]);
+  } void accessAbout(){
+    Get.offAndToNamed(Routes.ABOUT, arguments: [selectedQueue,true]);
   }
 
   List<Widget> buttonsFromAdminStatus(bool admin){
     List<Widget> children = <Widget>[];
     children.add(ElevatedButton(onPressed: () => view_images(), child: Text('Tocar fila')));
+    Widget queueButton = ElevatedButton(onPressed: () => edit_queues(admin, userEmailP), child: Text('Gerenciar filas'));
+    children.add(Container(width: 10,));
+    children.add(queueButton);
     if(admin){
-      Widget queueButton = ElevatedButton(onPressed: () => edit_queues(), child: Text('Gerenciar filas'));
-      children.add(Container(width: 10,));
-      children.add(queueButton);
+
 
 
       Widget adminButton = ElevatedButton(onPressed: () => manage_admin_list(), child: Text('Gerenciar Super Admins'));
@@ -269,11 +273,23 @@ class _DashboardPageState extends State<DashboardPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                   ),
-                  Column(
+                  Row(
                     children: [
-                      IconButton(onPressed: (){acessNotifications();}, icon: Icon(Icons.notifications)),
-                      Text("Notificações",style: TextStyle(color:Colors.black45, fontSize: 10),),
+                      Column(
+                        children: [
+                          IconButton(onPressed: (){accessAbout();}, icon: Icon(Icons.info_outline)),
+                          Text("Sobre",style: TextStyle(color:Colors.black45, fontSize: 10),),
 
+                        ],
+                      ),
+                      SizedBox(width:  10,),
+                      Column(
+                        children: [
+                          IconButton(onPressed: (){acessNotifications();}, icon: Icon(Icons.notifications)),
+                          Text("Notificações",style: TextStyle(color:Colors.black45, fontSize: 10),),
+
+                        ],
+                      ),
                     ],
                   )
                 ],
