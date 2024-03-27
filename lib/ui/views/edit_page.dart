@@ -199,15 +199,7 @@ class _EditPageState extends State<EditPage> {
     //then finally, get the images, where it first try to look for them in the cache, and if it´s not in cache downloads from web
     for(int i = 0; i<myTiles.length;i++) {
       String element = myTiles[i];
-      if (cachedTiles.contains(element)) {
-        Image i = Image.asset("assets/photos/" + element);
-        imageAssets.add(i);
-      }
-      else {
-        dynamic i = await storage.ref().child(element).getData();
-        Image im = Image.memory(i, fit: BoxFit.cover);
-        imageAssets.add(im);
-      }
+      await getImage(element);
     };
 
 
@@ -216,6 +208,21 @@ class _EditPageState extends State<EditPage> {
     });
     return;
   }
+
+  Future<void> getImage(String element) async{
+    if (cachedTiles.contains(element)) {
+      Image i = Image.asset("assets/photos/" + element);
+      imageAssets.add(i);
+    }
+    else {
+      dynamic i = await storage.ref().child(element).getData();
+      Image im = Image.memory(i, fit: BoxFit.cover);
+      imageAssets.add(im);
+    }
+  }
+
+
+
 
   bool gotImages = false;
 

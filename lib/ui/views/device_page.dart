@@ -73,7 +73,6 @@ class _DeviceInfoPageState extends State<DeviceInfoPage> {
 
 
 
-
       // Show a snackbar indicating successful save
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

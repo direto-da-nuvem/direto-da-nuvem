@@ -41,6 +41,9 @@ dependencies:
   google_sign_in: ^6.1.5
   firebase_storage: ^11.2.3
   cloud_firestore: ^4.8.1
+  flutter_all_path_provider: any
+  path: any
+  path_provider_android: any
   flutter_launcher_icons: ^0.13.1
   flutter_native_splash: ^2.3.2
   path_provider: ^2.1.1
@@ -48,6 +51,8 @@ dependencies:
   carousel_slider: ^4.2.1
   rename: ^2.1.1
   flutter_svg: any
+  flutter_cache_manager: any
+  io: any
   device_info_plus: any
   image_picker: any
   shared_preferences: any

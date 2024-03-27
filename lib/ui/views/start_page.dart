@@ -28,6 +28,7 @@ class _StartPageState extends State<StartPage> {
     var deviceId = prefs.getString('deviceId');
     return !(deviceId == null);
   }
+
   void checkIfDeviceConfigured() async{
     deviceConfigured = await isConfigured();
     if(!deviceConfigured){
