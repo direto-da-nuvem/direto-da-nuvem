@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:io/io.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
@@ -11,6 +12,9 @@ import 'package:sample/routes/app_pages.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:developer' as developer;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 
 class ShowcasePage extends StatefulWidget {
@@ -44,31 +48,83 @@ class _ShowcasePageState extends State<ShowcasePage> {
   final storage = FirebaseStorage.instance;
 
   bool instQueue = false;
-  Future<void> getImageData() async {
+
+  Future<void> getImageData() async { //get the data from all the images
     if(currentQueueFile=="InstallationQueue_Requests.txt"){instQueue = true;
-      if(Get.arguments[2]){RequestedImages = ["5.png"];}else{
-    RequestedImages = ["1.png","2.png","3.png","4.png"];} //This probably shouldn´t be hardcoded.
+      if(Get.arguments[2]){RequestedImages = ["5.png"];}else{ //In this case, when the argument passed is 1, then the queue is the tutorial queue (images 5.png)
+    RequestedImages = ["1.png","2.png","3.png","4.png"];} //In this case, when the argument passed is 1, then the queue is the installation queue (images 1.png - 4.png). TO-DO: Make this not hardcoded
     //TO-DO: Edit above structures
 }
     else{
+      await loadCacheData();
     await getRequestedImages();}
-    for(String s in RequestedImages){
-      print(s);
-      print("1.png");
-      //print(s[5]);
-      //print("1.png"[5]);
-      dynamic i = await storage.ref().child(s).getData();
-      print(s);
-      Image im = Image.memory(i,fit:BoxFit.cover);
-      print(s);
-      imageAssets.add(im);
-      developer.log("FINISHED LOADING IMAGE $s");}
+    for(String imagePath in RequestedImages){
+     await getImage(imagePath);
+      developer.log("FINISHED LOADING IMAGE $imagePath");}
     finishedLoading();
     return;
   }
 
-  List<String> defaultImages = <String>['cat.jpg','rocket.jpg','lake.jpg'];
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  List<String> defaultImages = <String>['cat.jpg','rocket.jpg','lake.jpg']; //backup in case regular default queue does not work and a device ends up w/o queue
+  FirebaseFirestore firestore = FirebaseFirestore.instance; //TO-DO: Update above backup
+
+  List<String>? cachedTiles = [];
+  SharedPreferences? prefs;
+
+  Future<void> loadCacheData() async{ //called once when page is about to get built, to see if a image of the queue is already stored locally
+    prefs = await SharedPreferences.getInstance();
+    cachedTiles = await prefs?.getStringList('Downloaded_Images');
+    if(cachedTiles == null){cachedTiles = [];}
+  }
+
+  Future<void> getImage(String element) async{ //gets the data from a specific image
+    if (!cachedTiles!.contains(element)) {
+      dynamic i = await storage.ref().child(element).getData();
+      insertDataIntoCache(element, i);
+      print('DID NOT FOUND IMAGE IN CACHE ' + element );
+    }
+
+      //then gets data normally. this could prob be done more efficiently. TO-DO
+      dynamic imgData = getImageFromCache(element);
+
+      //TEMP
+       imgData = await storage.ref().child(element).getData();
+      //TEMP
+      Image im = Image.memory(imgData, fit: BoxFit.cover); //adds a image i to the image.memory instead of from
+                                                      //can i get i from gallery instead? and always?
+      imageAssets.add(im);
+  }
+
+
+
+  Future<dynamic> getImageFromCache(String imageName) async{
+    dynamic dynamicVar = imageName;
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/$imageName');
+      if (await file.exists()) {
+    return await file.readAsBytes();
+    } else {
+    }
+    } catch (e) {
+    print('Error retrieving image: $e');
+    }
+    return dynamicVar;
+  }
+
+  Future<void> downloadImage(var imageData, String imageName) async{
+    final directory = await getApplicationDocumentsDirectory();
+    var file = File('${directory.path}/$imageName');
+    await file.writeAsBytes(imageData);
+  }
+
+  Future<void> insertDataIntoCache(String element, var imageData) async{ //inserts a new image which is being downloaded into the cache
+    cachedTiles!.add(element);
+    prefs = await SharedPreferences.getInstance();
+
+    //Adds the new element to the Cache, and then salves that updated Cache to local storage
+    await prefs?.setStringList('Downloaded_Images', cachedTiles!);
+  }
 
   Future<void> getRequestedImages() async{
     String qname = Get.arguments[0];
@@ -76,16 +132,19 @@ class _ShowcasePageState extends State<ShowcasePage> {
     var newQueueDocRef = c.docs[0].reference;
     queueScreenTime = c.docs[0].data()['screenTime'];
     animEffectByName(c.docs[0].data()['entryEffect']);
-    var c2 = await newQueueDocRef.collection('images').get();
+
+    //newQueueDocRef, at this point, is a reference to the Queue that is being played in this page.
+    //after getting nqdr as well as its metadata, we then get all its images, which are stored in the 'images' sub-collection (check firebase)
+
+    var c2 = await newQueueDocRef.collection('images').get(); //change c2 name eventually TO-DO
     RequestedImages = [];
     for(int i =0; i<c2.docs.length;i++){
-      print(c2.docs[i].data()['imagePath']);
       if(c2.docs[i].data()['present']){
       RequestedImages.add(c2.docs[i].data()['imagePath']);}
     }
+    //RequestedImages is a list of paths to the image in firebase Storage (not firestore!)
 
     if(RequestedImages.length<1){RequestedImages = defaultImages;print('No requests found, selected default images to play.');}
-      //RequestedImages.forEach((element) {print(element);});
     return;
   }
 
@@ -109,8 +168,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   bool gotImages = false;
   int gindex = 0;
 
-  void animEffectByName(String effect){ //TO-DO: criar um map pra essas animações e fazer a consulta mais rapido
-    print(effect);
+  void animEffectByName(String effect){ //TO-DO: criar um map pra essas animações para fazer as consultas de maneira mais rapido
     if(effect == "instantaneous"){animationCurve = Curves.linear;  durationMilliseconds = 500;enlargeStrategy = CenterPageEnlargeStrategy.height; return;} //TO-DO: change this for a switch case eventually
     if(effect == "bounce"){animationCurve = Curves.bounceOut;  enlargeStrategy = CenterPageEnlargeStrategy.height; durationMilliseconds = 1600; return;}
     if(effect == "slide"){animationCurve = Curves.easeOutExpo; enlargeCenter = false; durationMilliseconds = 3200; return;}
@@ -137,9 +195,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
   dynamic tempImages;
   int queueScreenTime = 15;
   int getTimeForImage(int index){return queueScreenTime;}
-
-
-
 
   @override
 
@@ -173,7 +228,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
             gindex = index;
             return imageAssets[index];
             },
-          //carouselController: CarouselController(),
         ),
       ),
     );

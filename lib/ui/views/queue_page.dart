@@ -131,7 +131,7 @@ class _QueueListPageState extends State<QueueListPage> {
                 margin: EdgeInsets.symmetric(vertical: 4.0), // Add margin for spacing
                 child: ListTile(
                   title: Text(queues[index].name),
-                  subtitle: Text('Dispositivos: ${getDevString(queues[index])}\nAdmins: ${queues[index].adminEmail}'),
+                  //subtitle: Text('Dispositivos: ${getDevString(queues[index])}\nAdmins: ${queues[index].adminEmail}'),
                   onTap: () {
                     // Navigate to a page where the user can edit the selected queue
                     Navigator.push(
