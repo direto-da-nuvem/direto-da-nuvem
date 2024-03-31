@@ -40,8 +40,8 @@ task prepareKotlinBuildScriptModel {
 
 }
 android {
-    namespace "com.example.sample"
-    compileSdkVersion flutter.compileSdkVersion
+    namespace = "br.uff.dduff"
+    compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -59,10 +59,10 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "br.uff.sample"
+        applicationId "br.uff.dduff"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 23
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -82,7 +82,11 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+
 }
+
+
 
 flutter {
     source '../..'
@@ -90,4 +94,5 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
 }

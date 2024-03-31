@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sample/routes/app_pages.dart';
+import 'package:dduff/routes/app_pages.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class LoginController extends GetxController {

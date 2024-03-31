@@ -1,14 +1,14 @@
 import 'package:get/get.dart';
-import 'package:sample/ui/views/dashboard_page.dart';
-import 'package:sample/ui/views/device_page.dart';
-import 'package:sample/ui/views/login_page.dart';
-import 'package:sample/ui/views/showcase_page.dart';
-import 'package:sample/ui/views/edit_page.dart';
-import 'package:sample/ui/views/admin_page.dart';
-import 'package:sample/ui/views/device_page.dart';
-import 'package:sample/ui/views/start_page.dart';
-import 'package:sample/ui/views/notifications.dart';
-import 'package:sample/ui/views/about.dart';
+import 'package:dduff/ui/views/dashboard_page.dart';
+import 'package:dduff/ui/views/device_page.dart';
+import 'package:dduff/ui/views/login_page.dart';
+import 'package:dduff/ui/views/showcase_page.dart';
+import 'package:dduff/ui/views/edit_page.dart';
+import 'package:dduff/ui/views/admin_page.dart';
+import 'package:dduff/ui/views/device_page.dart';
+import 'package:dduff/ui/views/start_page.dart';
+import 'package:dduff/ui/views/notifications.dart';
+import 'package:dduff/ui/views/about.dart';
 
 import '../ui/views/queue_page.dart';
 
