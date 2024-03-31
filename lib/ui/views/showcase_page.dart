@@ -55,7 +55,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
     //TO-DO: Edit above structures
 }
     else{
-      await loadCacheData();
+      await loadCacheMetadata();
     await getRequestedImages();}
     for(String imagePath in RequestedImages){
      await getImage(imagePath);
@@ -67,27 +67,29 @@ class _ShowcasePageState extends State<ShowcasePage> {
   List<String> defaultImages = <String>['cat.jpg','rocket.jpg','lake.jpg']; //backup in case regular default queue does not work and a device ends up w/o queue
   FirebaseFirestore firestore = FirebaseFirestore.instance; //TO-DO: Update above backup
 
-  List<String>? cachedTiles = [];
+  List<String>? cachedElements = [];
   SharedPreferences? prefs;
 
-  Future<void> loadCacheData() async{ //called once when page is about to get built, to see if a image of the queue is already stored locally
+  Future<void> loadCacheMetadata() async{ //called once when page is about to get built, to see if a image of the queue is already stored locally
     prefs = await SharedPreferences.getInstance();
-    cachedTiles = await prefs?.getStringList('Downloaded_Images');
-    if(cachedTiles == null){cachedTiles = [];}
+    cachedElements = await prefs?.getStringList('Downloaded_Images');
+    if(cachedElements == null){cachedElements = [];}
   }
 
   Future<void> getImage(String element) async{ //gets the data from a specific image
-    if (!cachedTiles!.contains(element)) {
+    if (!cachedElements!.contains(element)) {
       dynamic i = await storage.ref().child(element).getData();
-      insertDataIntoCache(element, i);
+      await downloadImage(i, element);
+      await insertDataIntoCache(element, i);
+
       print('DID NOT FOUND IMAGE IN CACHE ' + element );
     }
 
       //then gets data normally. this could prob be done more efficiently. TO-DO
-      dynamic imgData = getImageFromCache(element);
+      dynamic imgData = await getImageFromCache(element);
 
       //TEMP
-       imgData = await storage.ref().child(element).getData();
+      // imgData = await storage.ref().child(element).getData();
       //TEMP
       Image im = Image.memory(imgData, fit: BoxFit.cover); //adds a image i to the image.memory instead of from
                                                       //can i get i from gallery instead? and always?
@@ -97,18 +99,24 @@ class _ShowcasePageState extends State<ShowcasePage> {
 
 
   Future<dynamic> getImageFromCache(String imageName) async{
-    dynamic dynamicVar = imageName;
     try {
       final directory = await getApplicationDocumentsDirectory();
       final file = File('${directory.path}/$imageName');
       if (await file.exists()) {
-    return await file.readAsBytes();
-    } else {
-    }
+        print('Got File From Cache');
+      return await file.readAsBytes();
+
+      }
+      else {
+        print('Image not found: $imageName');
+        print('Getting it from firebase instead.');
+        return await storage.ref().child(imageName).getData();
+      }
     } catch (e) {
-    print('Error retrieving image: $e');
+    print('Error retrieving image: $imageName ";  " $e');
+    print('Getting it from firebase instead.');
+    return await storage.ref().child(imageName).getData();
     }
-    return dynamicVar;
   }
 
   Future<void> downloadImage(var imageData, String imageName) async{
@@ -118,11 +126,11 @@ class _ShowcasePageState extends State<ShowcasePage> {
   }
 
   Future<void> insertDataIntoCache(String element, var imageData) async{ //inserts a new image which is being downloaded into the cache
-    cachedTiles!.add(element);
+    cachedElements!.add(element);
     prefs = await SharedPreferences.getInstance();
 
     //Adds the new element to the Cache, and then salves that updated Cache to local storage
-    await prefs?.setStringList('Downloaded_Images', cachedTiles!);
+    await prefs?.setStringList('Downloaded_Images', cachedElements!);
   }
 
   Future<void> getRequestedImages() async{
