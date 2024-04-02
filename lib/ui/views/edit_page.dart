@@ -396,7 +396,7 @@ class _EditPageState extends State<EditPage> {
                   Icon(Icons.add),
                   printWidget(),
                 ],
-              ),style:ElevatedButton.styleFrom(primary: Colors.blueGrey)),
+              ),style:ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey)),
             ),
           ) //button
         ],

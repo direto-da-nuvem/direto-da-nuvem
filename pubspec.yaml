@@ -48,7 +48,6 @@ dependencies:
   path_provider: ^2.1.1
   font_awesome_flutter: ^10.5.0
   carousel_slider: ^4.2.1
-  rename: ^2.1.1
   flutter_svg: any
   flutter_cache_manager: any
   io: any
@@ -56,18 +55,19 @@ dependencies:
   image_picker: any
   shared_preferences: any
   intl: any
+  rename: ^3.0.2
 
 flutter_launcher_icons:
-  image_path: "assets/logo4.png"
+  image_path: "assets/direto_da_nuvem_icon.png"
   ios: true
   remove_alpha_ios: true
   android: "launcher_icon"
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/logo4.png"
+  adaptive_icon_foreground: "assets/direto_da_nuvem_icon.png"
 
 flutter_native_splash:
   color: "#3F51B5"
-  image: "assets/logo3.png"
+  image: "assets/direto_da_nuvem_icon.png"
   android: true
   ios: true
 

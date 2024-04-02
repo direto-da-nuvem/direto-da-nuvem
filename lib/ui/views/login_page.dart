@@ -128,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                                 padding: const EdgeInsets.fromLTRB(2,0,2,0),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    primary: Colors.grey,
+                                    backgroundColor: Colors.grey,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
                                     ),
@@ -163,7 +163,7 @@ class _LoginPageState extends State<LoginPage> {
                                 padding: const EdgeInsets.fromLTRB(2,5,2,0),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    primary: Colors.blue,
+                                    backgroundColor: Colors.blue,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0), // Define o raio das bordas
                                     ),
