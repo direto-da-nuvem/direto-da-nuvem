@@ -59,6 +59,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "159512930700-339no0c39jhhiku93agf620l6s6ipsfk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.uff.diretoDaNuvem",
+            "certificate_hash": "fdacea2737b59f935c2aee7ed6f66941e61792e0"
+          }
+        },
+        {
+          "client_id": "159512930700-montks0vsr79842rjnuulju43ivpnkit.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.uff.diretoDaNuvem",
+            "certificate_hash": "879fc3457c738b42476cf03c67a828a26a668a3c"
+          }
+        },
+        {
           "client_id": "159512930700-fk0doltakaer9ptfktp70kf7gie03ur6.apps.googleusercontent.com",
           "client_type": 3
         }
