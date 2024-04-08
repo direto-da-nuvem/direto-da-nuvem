@@ -30,7 +30,8 @@ class _AboutPageState extends State<AboutPage> {
             Text("\nDireto da UFF é um sistema desenvolvido pelo STI e SCS, visando promover a propagação de informativos, images e anúncios nos campus universitários. \nCréditos para:"),
             SizedBox(height: 9,),
 
-            Text("-Desenvolvedores: Guilherme Lacerda"),
+            Text("-Desenvolvedor Inicial: Guilherme Lacerda"),
+            Text("-Desenvolvedor Atual: Enzo Lage"),
             Text("-Coordenador: Cosme Faria Correia"),
             Text("-Suporte: Marcos Fernandes, Rafael Delgado, Ronald Sampaio, Victor Gabriel, Cleuson de Oliveira"),
             Text("-Arte: Joaquim Guedes, Carolina Oliveira"),
