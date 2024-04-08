@@ -65,7 +65,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   }
 
   List<String> defaultImages = <String>['cat.jpg','rocket.jpg','lake.jpg']; //backup in case regular default queue does not work and a device ends up w/o queue
-  FirebaseFirestore firestore = FirebaseFirestore.instance; //TO-DO: Update above backup
+  FirebaseFirestore firestore = FirebaseFirestore.instance; //TO-DO: Update the backup system shown above
 
   List<String>? cachedElements = [];
   SharedPreferences? prefs;

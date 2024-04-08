@@ -49,22 +49,8 @@ class _QueueListPageState extends State<QueueListPage> {
     bool universalAdmin = Get.arguments[0];
     isAdmin = universalAdmin;
     String userEmail = Get.arguments[1];
-    print(userEmail);
-    print(userEmail);
-    print(userEmail);
-    print(userEmail);
-    print(userEmail);
-    print(userEmail);
-    print(userEmail);
-    print(userEmail);
-    print(userEmail);
-    print(userEmail);
-    print(userEmail);
     for(int i =0; i<c.docs.length;i++){
       Queue q = Queue(name: c.docs[i].data()['name'], id: c.docs[i].data()['name'].toString().removeAllWhitespace, adminEmail: c.docs[i].data()['admin'], monitored:  c.docs[i].data()['monitored']);
-      print(userEmail);
-      print(userEmail);
-      print(userEmail);
       print(userEmail == c.docs[i].data()['email']);
       var v = await c.docs[i].reference.collection('admins').where('email',isEqualTo: userEmail).get();
 
@@ -79,9 +65,6 @@ class _QueueListPageState extends State<QueueListPage> {
        devices.add(dId);
        deviceIds.add(dId);
        deviceNames.add(d.docs[i].data()['name']);
-       print('bbbbbbbbb');
-       print(c.docs.length);
-       print(deviceNames);
     }
 
     queueLoaded = true;
@@ -201,19 +184,6 @@ class _QueueEditPageState extends State<QueueEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.isAdmin);
-    print(widget.isAdmin);
-    print(widget.isAdmin);
-    print(widget.isAdmin);
-    print(widget.isAdmin);
-    print(widget.isAdmin);
-    print(widget.isAdmin);
-    print(widget.isAdmin);
-    print(widget.isAdmin);
-    print(widget.isAdmin);
-    print(widget.isAdmin);
-    print(widget.isAdmin);
-    print(widget.isAdmin);
     if(_dropdownValue =="")
     {
       getStartingValues();
@@ -617,7 +587,7 @@ class _QueueAnimationPageState extends State<QueueAnimationPage> {
                     DropdownButton( items: animationOptionItems, value: _dropdownValue, onChanged: (String? value) {if(value is String){
                       print(value);entryEffect = value; setState(() {
                         _dropdownValue = value;
-                      }); print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+                      });
                     }}),
                   ],
                 ),
