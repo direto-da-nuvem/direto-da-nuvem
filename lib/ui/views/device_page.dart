@@ -30,8 +30,6 @@ class _DeviceInfoPageState extends State<DeviceInfoPage> {
 
   Future<String> loadDeviceInfo() async{
     deviceInfo = await deviceInfoPlugin.androidInfo;
-    print(deviceInfo);
-    print(deviceInfo.serialNumber);
     return deviceInfo.serialNumber.toString();
   }
 
@@ -41,7 +39,7 @@ class _DeviceInfoPageState extends State<DeviceInfoPage> {
     String deviceName = _deviceNameController.text;
     String deviceLocation = _deviceLocationController.text;
     String deviceSerial = await loadDeviceInfo();
-    print('SERIAL:');
+    //print('SERIAL:');
     //print(deviceSerial);
 
     //Get.offAndToNamed(Routes.DASHBOARD);

@@ -71,14 +71,11 @@ class _DashboardPageState extends State<DashboardPage> {
         systemAdmins.add(files[i]);
       }
     }
-    print('Elements');
     userEmailP = userEmail;
     systemAdmins.forEach((element) {print(element);print(element==userEmail);});
-    print(userEmail);
     admin = false;
     try{
       admin = systemAdmins.contains(userEmail);}catch(_){}
-    print(admin);
     gotAdminStatus = true;
     isLoading = false;
     re();
@@ -107,15 +104,12 @@ class _DashboardPageState extends State<DashboardPage> {
     var c = await firestore.collection('devices').doc(dId);
     var mappedQueueId;
     var mappedQueue;
-    print(dId);
-    print('Got here');
     await c.get().then(
             (DocumentSnapshot doc) {
           final dataa = doc.data() as Map<String, dynamic>;
           mappedQueueId = dataa['queue']; print(mappedQueueId); print(dataa['queue']);
           deviceName = dataa['name'];
         });
-    print(mappedQueueId);
     c = await firestore.collection('queue').doc(mappedQueueId);
     await c.get().then(
             (DocumentSnapshot doc) {
@@ -129,7 +123,6 @@ class _DashboardPageState extends State<DashboardPage> {
     //dynamic requests = await storage.ref().child("queue_data.txt").getData();;//queuesFromString(utf8.decode(requests));
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     deviceId = prefs.getString('deviceId');
-    print(deviceId);
     if (deviceId==null){return "MeuDispositivo#1";}
     else {return deviceId!;}
   }

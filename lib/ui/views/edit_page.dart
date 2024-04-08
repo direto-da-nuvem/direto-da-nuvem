@@ -45,7 +45,6 @@ class _EditPageState extends State<EditPage> {
             allImages += myTiles[i] + '\n';
         }
         allImages += (pickedFile.name + '\n');
-        print(allImages);
         await storage.ref().child("allImages.txt").putString(allImages);
         await storage.ref().child(pickedFile.name).putFile(File(pickedFile.path));
         isLoading = false;
@@ -141,12 +140,9 @@ class _EditPageState extends State<EditPage> {
     var c = await firestore.collection('queue').where('name',isEqualTo: qname).get();
     var newQueueDocRef = c.docs[0].reference;
     var c2 = await newQueueDocRef.collection('images').get();
-    print(c2.docs[0].data()['imagePath']);
     while(myTiles.length!=0){ myTiles.removeLast();present.removeLast();}
     List<String> presentImages = <String>[];
-    print(c2.docs.length);
     for(int i =0; i<c2.docs.length;i++){
-      print(c2.docs[i].data()['imagePath']);
       bool d = true;
       d = false;
       if(c2.docs[i].data()['present'] ==true){d=true;}
@@ -192,7 +188,7 @@ class _EditPageState extends State<EditPage> {
           present.add(false); //can be modified later
         }
       }
-      myTiles.forEach((element) {print(element);});
+      //myTiles.forEach((element) {print(element);});
     }
 
 
