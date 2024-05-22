@@ -1,19 +1,23 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dduff/controllers/firestore_helper.dart';
+import 'package:dduff/routes/app_pages.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:dduff/controllers/login_controller.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import '../../routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import '../../controllers/firestore_helper.dart';
 
 Future<void> goBack() async {
-  //go back
+//go back
   queueLoaded = false;
   Get.offAndToNamed(Routes.DASHBOARD);
 }
@@ -344,33 +348,32 @@ class _QueueEditPageState extends State<QueueEditPage> {
                     child: Text('Gerenciar admins da Fila'),
                   ),
                 ),
-                
               ],
             ),
             getWidget(
-                   widget.isAdmin,
-                   ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text("Deletar Fila"),
-                              content: Text(
-                                  "Tem certeza que deseja deletar essa fila? Filas deletedas não podem ser recuperadas"),
-                              actions: [
-                                ElevatedButton(
-                                    onPressed: () {
-                                      deleteData_deleteDocs(); // firestore_helper.dart
-                                    },
-                                    child: Text("Deletar Fila"))
-                              ],
-                            );
-                          });
-                    },
-                    child: Text('Deletar Fila'),
-                  ),
-                ),
+              widget.isAdmin,
+              ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text("Deletar Fila"),
+                          content: Text(
+                              "Tem certeza que deseja deletar essa fila? Filas deletedas não podem ser recuperadas"),
+                          actions: [
+                            ElevatedButton(
+                                onPressed: () {
+                                  FirebaseFirestore.instance.collection('queue').doc().delete();
+                                },
+                                child: Text("Deletar Fila"))
+                          ],
+                        );
+                      });
+                },
+                child: Text('Deletar Fila'),
+              ),
+            ),
           ],
         ),
       ),
@@ -467,21 +470,40 @@ class _QueueCreatePageState extends State<QueueCreatePage> {
       // Access Firestore instance
       FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+
+
+      String uid = FirebaseAuth.instance.currentUser!.uid;
+      DateTime registrationDate = DateTime.now();
+      String millisecondsTimeStamp = registrationDate.millisecondsSinceEpoch.toString();
+      String DocId = "$uid$millisecondsTimeStamp";
+
       // Add device information to Firestore
-      DocumentReference<Map<String, dynamic>> newQueueDocRef =
-          await firestore.collection('queue').add({
+
+      Map<String, dynamic> queueContent =
+      {
         'name': qname,
         'admin': adminEmail,
         'entryEffect': "default",
         'screenTime': 10,
-        'monitored': false
+        'monitored': false,
+        'DocId' : DocId
+      };
+
+      final db = FirebaseFirestore.instance;
+
+      await db.collection("queue").doc(DocId).set(queueContent).then((_) {
+        debugPrint("New sample saved");
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/dashboard', (route) => false);
+      }).onError((e, _) {
+        debugPrint("Error saving sample: $e");
       });
 
       var c = await firestore
           .collection('queue')
-          .where('name', isEqualTo: qname)
+          .where('DocId', isEqualTo: DocId)
           .get();
-      newQueueDocRef = c.docs[0].reference;
+      DocumentReference<Map<String, dynamic>>  newQueueDocRef = c.docs[0].reference;
 
       CollectionReference<Map<String, dynamic>> imagesSubcollection =
           await newQueueDocRef.collection('images');
@@ -551,7 +573,9 @@ class _QueueCreatePageState extends State<QueueCreatePage> {
                     name: nameController.text,
                     id: nameController.text.removeAllWhitespace,
                     adminEmail: adminEmailController.text,
-                    monitored: true);
+                    monitored: true
+                );
+
                 _createNewQueue(newQueue.name, newQueue.adminEmail, newQueue);
               },
               child: Text('Create Queue'),

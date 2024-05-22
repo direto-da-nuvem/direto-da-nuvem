@@ -2,12 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dduff/ui/views/queue_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
- void deleteData_deleteDocs() {
-    // [START delete_data_delete_docs]
-    FirebaseFirestore.instance.collection("queue").doc("this.queue").delete().then(
-          (doc) => print("Document deleted"),
-          onError: (e) => print("Error updating document $e"),
-        );
-    // [END delete_data_delete_docs]
-  }
+ class FirestoreHelper extends GetxController {
+    String QID = '';
+    
+    Future<void> deleteData_deleteDocs() async {
+    print(QID);
+  
+    final reference = FirebaseFirestore.instance.collection("queue").doc();
+}
+ }
+
