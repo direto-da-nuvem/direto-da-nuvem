@@ -30,11 +30,14 @@ class Queue {
   String id;
   String adminEmail;
   bool monitored;
+  String DocId;
   Queue(
       {required this.name,
       required this.id,
       required this.adminEmail,
-      required this.monitored});
+      required this.monitored,
+      required this.DocId
+      });
 }
 
 class QueueListPage extends StatefulWidget {
@@ -50,6 +53,7 @@ class _QueueListPageState extends State<QueueListPage> {
   List<String> deviceNames = <String>[];
   List<String> devices = <String>[];
   bool isAdmin = false;
+  String DocId = '';
 
   void getQueueData() async {
     //dynamic requests = await storage.ref().child("queue_data.txt").getData();;//queuesFromString(utf8.decode(requests));
@@ -59,12 +63,21 @@ class _QueueListPageState extends State<QueueListPage> {
     isAdmin = universalAdmin;
     String userEmail = Get.arguments[1];
     for (int i = 0; i < c.docs.length; i++) {
+      print('+++++++++++++++');
+      print(userEmail == c.docs[i].data()['email']);
+      print(userEmail == c.docs[i].data()['name']);
+      print(userEmail == c.docs[i].data()['DocId']);
+      print(userEmail == c.docs[i].data()['entryEffect']);
+      print(userEmail == c.docs[i].data()['screenTime']);
       Queue q = Queue(
           name: c.docs[i].data()['name'],
           id: c.docs[i].data()['name'].toString().removeAllWhitespace,
           adminEmail: c.docs[i].data()['admin'],
-          monitored: c.docs[i].data()['monitored']);
+          monitored: c.docs[i].data()['monitored'],
+          DocId: c.docs[i].data()['DocId']
+      );
       print(userEmail == c.docs[i].data()['email']);
+      DocId = c.docs[i].data()['DocId'];
       var v = await c.docs[i].reference
           .collection('admins')
           .where('email', isEqualTo: userEmail)
@@ -148,6 +161,7 @@ class _QueueListPageState extends State<QueueListPage> {
                                 deviceIds: deviceIds,
                                 deviceNames: deviceNames,
                                 isAdmin: isAdmin,
+                                DocId: DocId,
                               ),
                             ),
                           );
@@ -194,12 +208,14 @@ class QueueEditPage extends StatefulWidget {
   final List<String> deviceNames;
   final List<String> deviceIds;
   final bool isAdmin;
-
+  final String DocId;
   QueueEditPage(
       {required this.queue,
       required this.deviceNames,
       required this.deviceIds,
-      required this.isAdmin});
+      required this.isAdmin,
+      required this.DocId
+      });
 
   @override
   _QueueEditPageState createState() => _QueueEditPageState();
@@ -364,7 +380,7 @@ class _QueueEditPageState extends State<QueueEditPage> {
                           actions: [
                             ElevatedButton(
                                 onPressed: () {
-                                  FirebaseFirestore.instance.collection('queue').doc().delete();
+                                  FirebaseFirestore.instance.collection('queue').doc(widget.DocId).delete();
                                 },
                                 child: Text("Deletar Fila"))
                           ],
@@ -516,6 +532,12 @@ class _QueueCreatePageState extends State<QueueCreatePage> {
         'order': 0,
         'present': true
       });
+      CollectionReference<Map<String, dynamic>> adminsSubcollection =
+      await newQueueDocRef.collection('admins');
+      await adminsSubcollection.doc().set({
+        'email': adminEmail,
+      });
+
 
       // Show a snackbar indicating successful save
       ScaffoldMessenger.of(context).showSnackBar(
@@ -568,12 +590,17 @@ class _QueueCreatePageState extends State<QueueCreatePage> {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
+                String uid = FirebaseAuth.instance.currentUser!.uid;
+                DateTime registrationDate = DateTime.now();
+                String millisecondsTimeStamp = registrationDate.millisecondsSinceEpoch.toString();
+                String DocId = "$uid$millisecondsTimeStamp";
                 // Create a new queue and add it to the list
                 Queue newQueue = Queue(
                     name: nameController.text,
                     id: nameController.text.removeAllWhitespace,
                     adminEmail: adminEmailController.text,
-                    monitored: true
+                    monitored: true,
+                    DocId: DocId
                 );
 
                 _createNewQueue(newQueue.name, newQueue.adminEmail, newQueue);
