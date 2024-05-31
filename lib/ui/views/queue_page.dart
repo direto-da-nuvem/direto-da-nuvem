@@ -373,8 +373,9 @@ class _QueueEditPageState extends State<QueueEditPage> {
                               "Tem certeza que deseja deletar essa fila? Filas deletedas não podem ser recuperadas"),
                           actions: [
                             ElevatedButton(
-                                onPressed: () {
-                                  FirebaseFirestore.instance.collection('queue').doc(widget.DocId).delete();
+                                onPressed: () async {
+                                  await FirebaseFirestore.instance.collection('queue').doc(widget.DocId).delete();
+                                  Get.offAndToNamed(Routes.DASHBOARD);
                                 },
                                 child: Text("Deletar Fila"))
                           ],
