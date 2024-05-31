@@ -63,12 +63,6 @@ class _QueueListPageState extends State<QueueListPage> {
     isAdmin = universalAdmin;
     String userEmail = Get.arguments[1];
     for (int i = 0; i < c.docs.length; i++) {
-      print('+++++++++++++++');
-      print(userEmail == c.docs[i].data()['email']);
-      print(userEmail == c.docs[i].data()['name']);
-      print(userEmail == c.docs[i].data()['DocId']);
-      print(userEmail == c.docs[i].data()['entryEffect']);
-      print(userEmail == c.docs[i].data()['screenTime']);
       Queue q = Queue(
           name: c.docs[i].data()['name'],
           id: c.docs[i].data()['name'].toString().removeAllWhitespace,
@@ -161,7 +155,7 @@ class _QueueListPageState extends State<QueueListPage> {
                                 deviceIds: deviceIds,
                                 deviceNames: deviceNames,
                                 isAdmin: isAdmin,
-                                DocId: DocId,
+                                DocId: queues[index].DocId,
                               ),
                             ),
                           );
