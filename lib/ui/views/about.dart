@@ -32,7 +32,7 @@ class _AboutPageState extends State<AboutPage> {
 
             Text("-Desenvolvedores: Guilherme Lacerda"),
             Text("-Coordenador: Cosme Faria Correia"),
-            Text("-Suporte: Marcos Fernandes, Rafael Delgado, Ronald Sampaio, Victor Gabriel, Cleuson de Oliveira"),
+            Text("-Suporte: Marcos Fernando, Rafael Delgado, Ronald Sampaio, Victor Gabriel, Cleuson de Oliveira"),
             Text("-Arte: Joaquim Guedes, Carolina Oliveira"),
           ],
         ),

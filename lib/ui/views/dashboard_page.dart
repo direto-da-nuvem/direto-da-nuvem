@@ -253,7 +253,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       SizedBox(height: 16,),
                       Text('Usuário atual:  ' + currentAuth.currentUser!.displayName! + adminSuffix(admin)),
                       Text('Dispositivo: ' + StringNotNull(deviceName)),
-                       Text("Fila: " + selectedQueue),
+                       Text("Fila selecionada: " + selectedQueue),
                       Text(''),
                       Text(''),
                       Padding(

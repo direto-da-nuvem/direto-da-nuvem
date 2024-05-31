@@ -437,7 +437,7 @@ class _QueueEditPageState extends State<QueueEditPage> {
       );
 
       Navigator.pop(context);
-      Get.offAndToNamed(Routes.QUEUE, arguments: 1);
+      Get.offAndToNamed(Routes.DASHBOARD);
     } else {
       // Show an error snackbar if fields are empty
       ScaffoldMessenger.of(context).showSnackBar(
