@@ -29,8 +29,7 @@ class _EditPageState extends State<EditPage> {
   String entryEffect = "";
   String exitEffect = "";
 
-  Future<void> beginUpload()
-  async {
+  Future<void> beginUpload() async {
     await saveToDatabase();
     final picker = ImagePicker();
     var pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -341,7 +340,11 @@ class _EditPageState extends State<EditPage> {
   Widget build(BuildContext context) {
     if(!gotImages){getRequestedTiles();gotImages=true;}
     return Scaffold(
-      appBar: AppBar(toolbarHeight: 50, title: Text("Edit Queue: "+Get.arguments[0]), centerTitle: false,leading: IconButton(onPressed: ()=> goBack(), icon: Icon(Icons.arrow_back)),),
+      appBar: AppBar(
+        toolbarHeight: 50,
+        title: Text("Edit Queue"),
+        centerTitle: false,
+      ),
       backgroundColor: Colors.white,
       body: isLoading? const Center(child:CircularProgressIndicator()) : Column(
         children: [

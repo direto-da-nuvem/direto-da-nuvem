@@ -319,7 +319,7 @@ class _QueueEditPageState extends State<QueueEditPage> {
                     // Save the changes and pop the page
                     queueLoaded = false;
                     Get.offAndToNamed(Routes.EDIT,
-                        arguments: [widget.queue.id, false]);
+                        arguments: [widget.queue.DocId, false]);
                   },
                   child: Text('Editar Imagens da Fila'),
                 ),
