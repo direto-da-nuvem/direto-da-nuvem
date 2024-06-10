@@ -61,17 +61,28 @@ class _EditPageState extends State<EditPage> {
   }
 
   Future<void> saveToDatabase() async{
+    print("++++++++++++++++++++++++++++++ 0 +++++++++++++++++++++++++++++++++++++");
     isLoading = true;
+    print("++++++++++++++++++++++++++++++ 1 +++++++++++++++++++++++++++++++++++++");
 
     for(int i =0; i<myTiles.length;i++) {
+      print("++++++++++++++++++++++++++++++ 2 +++++++++++++++++++++++++++++++++++++");
       bool currentlyPresent = present[i];
-      var c = await firestore.collection('queue').where('name',isEqualTo: Get.arguments[0]).get();
+      print("++++++++++++++++++++++++++++++ 3 +++++++++++++++++++++++++++++++++++++");
+      var c = await firestore.collection('queue').where('DocId',isEqualTo: Get.arguments[0]).get();
+      print("++++++++++++++++++++++++++++++ 4 +++++++++++++++++++++++++++++++++++++");
       var newQueueDocRef = c.docs[0].reference;
+      print("++++++++++++++++++++++++++++++ 5 +++++++++++++++++++++++++++++++++++++");
       var c2 = await newQueueDocRef.collection('images');
+      print("++++++++++++++++++++++++++++++ 6 +++++++++++++++++++++++++++++++++++++");
       c2.doc(myTiles[i]).update(({'present':currentlyPresent}));
+      print("++++++++++++++++++++++++++++++ 7 +++++++++++++++++++++++++++++++++++++");
       c2.doc(myTiles[i]).update(({'order':i}));
+      print("++++++++++++++++++++++++++++++ 8 +++++++++++++++++++++++++++++++++++++");
     }
+    print("++++++++++++++++++++++++++++++ 9 +++++++++++++++++++++++++++++++++++++");
     isLoading = false;
+    print("++++++++++++++++++++++++++++++ 10 +++++++++++++++++++++++++++++++++++++");
 }
 
   Future<void> rewriteDatabase() async{
@@ -134,9 +145,12 @@ class _EditPageState extends State<EditPage> {
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   Future<void> getRequestedTiles() async{
-
     String qname = Get.arguments[0];
-    var c = await firestore.collection('queue').where('name',isEqualTo: qname).get();
+
+    print("qname: $qname");
+
+
+    var c = await firestore.collection('queue').where('DocId',isEqualTo: qname).get();
     var newQueueDocRef = c.docs[0].reference;
     var c2 = await newQueueDocRef.collection('images').get();
     while(myTiles.length!=0){ myTiles.removeLast();present.removeLast();}
@@ -144,7 +158,9 @@ class _EditPageState extends State<EditPage> {
     for(int i =0; i<c2.docs.length;i++){
       bool d = true;
       d = false;
-      if(c2.docs[i].data()['present'] ==true){d=true;}
+      if(c2.docs[i].data()['present'] ==true){
+        d=true;
+      }
       if(d){
         myTiles.add(c2.docs[i].data()['imagePath']);
         present.add(true);
@@ -227,8 +243,8 @@ class _EditPageState extends State<EditPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           scrollable: true,
-          title: Text("Deletar Imagem?"),
-          content: SingleChildScrollView(
+          title: const Text("Deletar Imagem?"),
+          content: const SingleChildScrollView(
 
             child: Column(
               children: [
@@ -241,13 +257,13 @@ class _EditPageState extends State<EditPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text("Não"),),
+              child: const Text("Não"),),
             TextButton(
               onPressed: () {
                 deleteImage(image);
                 Navigator.of(context).pop();
               },
-              child: Text("Sim"),
+              child: const Text("Sim"),
             ),
 
 
@@ -262,7 +278,7 @@ class _EditPageState extends State<EditPage> {
     if(await imageInQueue(image)){
       isLoading = false;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Cannot delete images currently being used in a queue.'),
         ),
       );
@@ -342,8 +358,12 @@ class _EditPageState extends State<EditPage> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 50,
-        title: Text("Edit Queue"),
+        title: const Text("Edit Queue"),
         centerTitle: false,
+          // leading: IconButton(
+          //     onPressed: ()=> goBack(),
+          //     icon: const Icon(Icons.arrow_back)
+          // )
       ),
       backgroundColor: Colors.white,
       body: isLoading? const Center(child:CircularProgressIndicator()) : Column(
@@ -352,7 +372,7 @@ class _EditPageState extends State<EditPage> {
             child: SizedBox(
               height:200,
               child: ReorderableListView(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 children: [for (int i =0; i<myTiles.length;i++)
                   Padding(
                     key: ValueKey(myTiles[i]),
@@ -373,7 +393,7 @@ class _EditPageState extends State<EditPage> {
                                   child: Text((i+1).toString()),
                                 ),
                                 Container(width:20,child: Checkbox(key: ValueKey(present[i]) ,value: present[i], onChanged: (bool? value) {setState(() {present[i] = !present[i];}); addImageToQueue(myTiles[i], i, present[i]); },)),
-                                Container(width:20,child: IconButton(onPressed: ()=>{_showConfigDialog(context,myTiles[i], Get.arguments[0])}, icon: Icon(Icons.delete))),
+                                Container(width:20,child: IconButton(onPressed: ()=>{_showConfigDialog(context,myTiles[i], Get.arguments[0])}, icon: const Icon(Icons.delete))),
                               ],
                             )
                             ),
@@ -387,15 +407,32 @@ class _EditPageState extends State<EditPage> {
           ), //list
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              width: 200,
-              child: ElevatedButton(onPressed: ()=>beginUpload(), child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.add),
-                  printWidget(),
-                ],
-              ),style:ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SizedBox(
+                  width: 200,
+                  child: ElevatedButton(
+                      onPressed: ()=>beginUpload(),
+                      style:ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.add),
+                          printWidget(),
+                        ],
+                      )
+                  ),
+                ),
+                SizedBox(
+                  width: 200,
+                  child: ElevatedButton(
+                      onPressed: ()=>saveToDatabase(),
+                      style:ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                      child: const Text("Save")
+                  ),
+                ),
+              ],
             ),
           ) //button
         ],
@@ -405,7 +442,15 @@ class _EditPageState extends State<EditPage> {
   }
 }
 int i = 0;
-Widget printWidget(){print('got here'); print(i++);return Text("Add new Image");}
-Widget printWidget2(){print('got here'); print(i++);return Text("");}
+Widget printWidget(){
+  print('got here');
+  print(i++);
+  return const Text("Add new Image");
+}
+Widget printWidget2(){
+  print('got here');
+  print(i++);
+  return const Text("");
+}
 
 
